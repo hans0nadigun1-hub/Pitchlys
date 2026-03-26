@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitchly — Assistant Restaurant</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f0f2f5;
+  --white:    #ffffff;
+  --dark:     #0d1117;
+  --dark2:    #161b22;
+  --dark3:    #21262d;
+  --border:   #30363d;
+  --border-l: #e5e7eb;
+  --accent:   #f97316;
+  --accent2:  #fb923c;
+  --green:    #22c55e;
+  --blue:     #3b82f6;
+  --red:      #ef4444;
+  --amber:    #f59e0b;
+  --text-d:   #f0f6fc;
+  --text-m:   #8b949e;
+  --text-l:   #374151;
+  --text-ll:  #6b7280;
+  --sans:     'DM Sans', sans-serif;
+  --mono:     'DM Mono', monospace;
+  --r:        10px;
+  --shadow:   0 2px 12px rgba(0,0,0,.08);
+  --shadow-d: 0 4px 20px rgba(0,0,0,.18);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--text-l);overflow:hidden}
+
+/* ══════════════════════════
+   LAYOUT
+══════════════════════════ */
+.shell{display:flex;height:100vh}
+
+/* ══════════════════════════
+   SIDEBAR
+══════════════════════════ */
+.sb{
+  width:236px;flex-shrink:0;
+  background:var(--dark);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  border-right:1px solid var(--border);
+}
+
+/* Brand */
+.sb-brand{
+  padding:18px 16px 14px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.sb-logo{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),#dc2626);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:16px;color:#fff;
+  box-shadow:0 0 16px rgba(249,115,22,.35);
+}
+.sb-brand-text{}
+.sb-brand-name{font-weight:700;font-size:15px;color:var(--text-d);letter-spacing:-.3px}
+.sb-brand-tag{font-size:10px;color:var(--text-m);margin-top:1px;font-family:var(--mono)}
+
+/* Lang selector */
+.sb-lang{
+  padding:10px 14px 8px;
+  border-bottom:1px solid var(--border);
+  display:flex;gap:5px;align-items:center;
+}
+.sb-lang-lbl{font-size:10px;font-weight:600;color:var(--text-m);text-transform:uppercase;letter-spacing:.8px;margin-right:2px}
+.lang-btn{
+  font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;
+  border:1px solid var(--border);background:transparent;color:var(--text-m);
+  cursor:pointer;transition:all .15s;font-family:var(--sans);
+}
+.lang-btn:hover{color:var(--text-d);border-color:var(--border)}
+.lang-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* Nav modes */
+.sb-nav{padding:10px 10px 4px;flex:1;overflow-y:auto}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-section-lbl{
+  font-size:10px;font-weight:600;color:var(--text-m);
+  text-transform:uppercase;letter-spacing:1px;
+  padding:4px 8px 6px;display:block;
+}
+.nav-item{
+  width:100%;display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:8px;border:none;
+  background:transparent;color:var(--text-m);
+  cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:500;
+  transition:all .15s;text-align:left;margin-bottom:1px;position:relative;
+}
+.nav-item:hover{background:var(--dark2);color:var(--text-d)}
+.nav-item.on{background:var(--dark2);color:var(--text-d)}
+.nav-item.on::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:18px;background:var(--accent);border-radius:0 2px 2px 0;
+}
+.nav-item.on .nav-dot{background:var(--accent);box-shadow:0 0 5px rgba(249,115,22,.5)}
+.nav-ico{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+.nav-lbl{flex:1}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:var(--dark3);transition:all .15s;flex-shrink:0}
+
+/* Config */
+.sb-config{padding:8px 10px 10px;border-top:1px solid var(--border)}
+.sb-config-lbl{font-size:10px;font-weight:600;color:var(--text-m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;display:block}
+.sb-inp{
+  width:100%;padding:8px 10px;font-size:12px;
+  background:var(--dark2);border:1px solid var(--border);border-radius:8px;
+  color:var(--text-d);outline:none;font-family:var(--sans);
+  transition:border-color .15s;margin-bottom:7px;
+}
+.sb-inp::placeholder{color:var(--text-m)}
+.sb-inp:focus{border-color:var(--accent)}
+.btn-launch{
+  width:100%;padding:10px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),#dc2626);
+  border:none;color:#fff;font-family:var(--sans);
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 14px rgba(249,115,22,.3);
+}
+.btn-launch:hover{opacity:.92;transform:translateY(-1px)}
+
+/* Stats */
+.sb-stats{padding:8px 10px 10px;border-top:1px solid var(--border)}
+.stat-box{
+  background:var(--dark2);border:1px solid var(--border);border-radius:9px;
+  padding:10px 12px;display:flex;justify-content:space-between;align-items:center;
+}
+.stat-lbl{font-size:11px;color:var(--text-m)}
+.stat-n{font-size:24px;font-weight:700;color:var(--accent);font-family:var(--mono)}
+.btn-exp-sm{
+  width:100%;margin-top:6px;padding:7px;border-radius:7px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--text-m);font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;
+}
+.btn-exp-sm:hover{background:var(--dark2);color:var(--text-d)}
+
+/* ── RECHERCHE RESTAURANT ── */
+.search-wrap{position:relative;margin-bottom:7px}
+.search-results{
+  position:absolute;top:100%;left:0;right:0;z-index:200;
+  background:var(--dark2);border:1px solid var(--border);
+  border-radius:0 0 8px 8px;max-height:180px;overflow-y:auto;
+  display:none;box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+.search-results.open{display:block}
+.search-results::-webkit-scrollbar{width:3px}
+.search-results::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sr-item{
+  padding:9px 11px;cursor:pointer;border-bottom:1px solid var(--border);
+  transition:background .12s;
+}
+.sr-item:last-child{border-bottom:none}
+.sr-item:hover{background:var(--dark3)}
+.sr-name{font-size:12px;font-weight:600;color:var(--text-d);margin-bottom:2px}
+.sr-addr{font-size:10px;color:var(--text-m);line-height:1.4}
+.sr-loading{padding:10px 11px;font-size:11px;color:var(--text-m);text-align:center;font-family:var(--mono)}
+.sr-empty{padding:10px 11px;font-size:11px;color:var(--text-m);text-align:center}
+
+.biz-selected{
+  background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);
+  border-radius:8px;padding:9px 11px;margin-bottom:7px;
+}
+.biz-sel-name{font-size:12px;font-weight:700;color:var(--text-d);margin-bottom:2px}
+.biz-sel-addr{font-size:10px;color:var(--text-m);line-height:1.4;margin-bottom:6px}
+.biz-sel-clear{
+  font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;
+  border:1px solid rgba(249,115,22,.4);background:transparent;
+  color:var(--accent);cursor:pointer;font-family:var(--sans);transition:all .15s;
+}
+.biz-sel-clear:hover{background:rgba(249,115,22,.15)}
+
+/* ══════════════════════════
+   MAIN
+══════════════════════════ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+
+/* Top bar */
+.topbar{
+  height:52px;background:var(--white);border-bottom:1px solid var(--border-l);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;flex-shrink:0;
+  box-shadow:var(--shadow);
+}
+.tb-l{display:flex;align-items:center;gap:10px}
+.tb-biz{font-weight:700;font-size:14px;color:var(--dark)}
+.tb-badge{
+  font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;
+  background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;
+  font-family:var(--mono);
+}
+.tb-live{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--green);font-weight:600}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:bk 1.5s ease infinite}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-r{display:flex;gap:7px;align-items:center}
+.btn-sm{
+  font-size:11px;font-weight:600;padding:6px 12px;border-radius:7px;
+  border:1px solid var(--border-l);background:var(--white);color:var(--text-ll);
+  cursor:pointer;font-family:var(--sans);transition:all .15s;
+}
+.btn-sm:hover{border-color:var(--red);color:var(--red)}
+
+/* Welcome */
+.welcome{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;padding:48px;text-align:center;
+}
+.welcome-logo{
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(135deg,var(--accent),#dc2626);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin-bottom:4px;
+  box-shadow:0 8px 28px rgba(249,115,22,.3);
+}
+.welcome h2{font-size:22px;font-weight:700;color:var(--dark);letter-spacing:-.3px}
+.welcome p{font-size:13px;color:var(--text-ll);max-width:320px;line-height:1.8}
+.w-tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:4px}
+.w-tag{font-size:11px;font-weight:500;padding:4px 12px;border-radius:20px;background:var(--white);border:1px solid var(--border-l);color:var(--text-ll);box-shadow:var(--shadow)}
+
+/* Messages */
+.msgs{
+  flex:1;overflow-y:auto;
+  padding:16px 20px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.msgs::-webkit-scrollbar{width:4px}
+.msgs::-webkit-scrollbar-thumb{background:var(--border-l);border-radius:2px}
+
+.msg{display:flex;gap:10px;animation:mfade .2s ease both}
+@keyframes mfade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+
+.av{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;
+  align-self:flex-end;margin-bottom:2px;
+}
+.bot .av{background:linear-gradient(135deg,var(--accent),#dc2626)}
+.user .av{background:var(--blue)}
+
+.mbody{max-width:74%;display:flex;flex-direction:column;gap:3px}
+.user .mbody{align-items:flex-end}
+
+.bubble{
+  padding:11px 15px;border-radius:16px;
+  font-size:13.5px;line-height:1.75;display:inline-block;
+}
+.bot .bubble{
+  background:var(--white);border:1px solid var(--border-l);color:var(--text-l);
+  border-radius:4px 16px 16px 16px;
+  box-shadow:var(--shadow);
+}
+.user .bubble{
+  background:var(--blue);color:#fff;
+  border-radius:16px 4px 16px 16px;
+}
+.mtime{font-size:10px;color:#9ca3af;padding:0 4px;font-family:var(--mono)}
+
+/* Typing */
+.typing-bub{
+  background:var(--white);border:1px solid var(--border-l);
+  border-radius:4px 16px 16px 16px;
+  padding:13px 16px;display:flex;gap:5px;align-items:center;
+  box-shadow:var(--shadow);
+}
+.typing-bub span{width:7px;height:7px;background:#d1d5db;border-radius:50%;animation:tdot .9s ease infinite}
+.typing-bub span:nth-child(2){animation-delay:.15s}
+.typing-bub span:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{transform:scale(.5);opacity:.4}30%{transform:scale(1);opacity:1}}
+
+/* Voice bar */
+.vbar{
+  display:none;align-items:center;gap:8px;
+  padding:6px 20px;background:#fff7ed;border-top:1px solid #fed7aa;
+  font-size:11px;color:#c2410c;font-weight:600;flex-shrink:0;
+  font-family:var(--mono);
+}
+.vwave{display:flex;align-items:center;gap:2px;height:14px}
+.vwave span{display:block;width:3px;border-radius:2px;background:var(--accent);animation:vw .7s ease infinite}
+.vwave span:nth-child(1){height:3px}.vwave span:nth-child(2){height:9px;animation-delay:.1s}
+.vwave span:nth-child(3){height:14px;animation-delay:.2s}.vwave span:nth-child(4){height:9px;animation-delay:.3s}
+.vwave span:nth-child(5){height:3px;animation-delay:.4s}
+@keyframes vw{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+
+/* Input zone */
+.izone{
+  background:var(--white);border-top:1px solid var(--border-l);
+  padding:10px 16px 13px;display:none;flex-shrink:0;
+  box-shadow:0 -2px 12px rgba(0,0,0,.04);
+}
+.back-row{display:flex;justify-content:flex-start;margin-bottom:8px}
+.btn-back{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;
+  border:1px solid var(--border-l);background:var(--bg);
+  color:var(--text-ll);cursor:pointer;font-family:var(--sans);transition:all .15s;
+}
+.btn-back:hover{border-color:var(--accent);color:var(--accent);background:#fff7ed}
+.btn-back:disabled{opacity:.3;cursor:not-allowed}
+
+.irow{display:flex;gap:8px;align-items:center}
+
+/* Micro */
+.mic-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
+.mic-btn{
+  width:44px;height:44px;border-radius:50%;
+  border:2px solid var(--border-l);background:var(--white);
+  cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;box-shadow:var(--shadow);
+}
+.mic-btn:hover{border-color:var(--accent);background:#fff7ed}
+.mic-btn.listening{
+  border-color:var(--red);background:#fef2f2;
+  animation:mring 1.2s ease infinite;
+}
+.mic-btn.speaking{border-color:var(--accent);background:#fff7ed;cursor:default}
+@keyframes mring{
+  0%,100%{box-shadow:0 0 0 3px rgba(239,68,68,.15)}
+  50%{box-shadow:0 0 0 9px rgba(239,68,68,.04)}
+}
+.mic-lbl{font-size:9px;font-weight:600;color:#9ca3af;text-align:center;width:48px;line-height:1.3;transition:color .2s;font-family:var(--mono)}
+.mic-lbl.listening{color:var(--red)}
+.mic-lbl.speaking{color:var(--accent)}
+
+.tinp{
+  flex:1;padding:11px 14px;font-size:13px;
+  background:var(--bg);border:1.5px solid var(--border-l);border-radius:12px;
+  color:var(--dark);outline:none;font-family:var(--sans);
+  resize:none;min-height:44px;max-height:92px;line-height:1.5;transition:border-color .15s;
+}
+.tinp:focus{border-color:var(--accent);background:var(--white)}
+.tinp::placeholder{color:#9ca3af}
+.tinp:disabled{opacity:.45}
+
+.sbtn{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),#dc2626);
+  border:none;cursor:pointer;font-size:17px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;box-shadow:0 4px 14px rgba(249,115,22,.3);
+}
+.sbtn:hover{opacity:.92;transform:scale(1.04)}
+.sbtn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* Calendrier */
+.cal-wrap{
+  background:var(--white);border:1px solid var(--border-l);border-radius:14px;
+  padding:14px;max-width:286px;box-shadow:var(--shadow-d);
+}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-ttl{font-size:13px;font-weight:700;color:var(--dark)}
+.cal-nav{
+  width:28px;height:28px;border-radius:7px;border:1px solid var(--border-l);
+  background:var(--white);cursor:pointer;font-size:15px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.cal-nav:hover{background:var(--bg)}
+.cal-dhead{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px}
+.cal-dn{font-size:9px;font-weight:700;color:#9ca3af;text-align:center;padding:3px 0;font-family:var(--mono)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cday{
+  aspect-ratio:1;border-radius:8px;border:none;background:transparent;
+  font-size:12px;font-weight:500;color:var(--text-l);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.cday:hover{background:#fff7ed;color:var(--accent)}
+.cday.today{border:1.5px solid var(--accent);color:var(--accent);font-weight:700}
+.cday.sel{background:var(--accent);color:#fff;font-weight:700}
+.cday.past{color:#d1d5db;cursor:not-allowed}
+.cday.past:hover{background:transparent;color:#d1d5db}
+.cday.empty{cursor:default}
+
+/* Sélecteur heure */
+.tpick{
+  background:var(--white);border:1px solid var(--border-l);border-radius:14px;
+  padding:14px;max-width:286px;box-shadow:var(--shadow-d);
+}
+.tpick-ttl{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:10px}
+.tpick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.tslot{
+  padding:8px 4px;border-radius:8px;border:1px solid var(--border-l);
+  background:var(--bg);font-size:12px;font-weight:600;color:var(--text-l);
+  cursor:pointer;text-align:center;transition:all .15s;font-family:var(--mono);
+}
+.tslot:hover{border-color:var(--accent);color:var(--accent);background:#fff7ed}
+.tslot.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ══════════════════════════
+   REGISTRE
+══════════════════════════ */
+.reg{
+  width:218px;flex-shrink:0;
+  background:var(--white);border-left:1px solid var(--border-l);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.reg-head{
+  padding:13px 13px 9px;border-bottom:1px solid var(--border-l);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.reg-ttl{font-size:12px;font-weight:700;color:var(--dark)}
+.reg-ct{
+  font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;
+  background:#fff7ed;color:#c2410c;font-family:var(--mono);
+}
+.reg-filt{
+  display:flex;gap:4px;padding:7px 10px;
+  border-bottom:1px solid #f3f4f6;flex-wrap:wrap;
+}
+.rf{
+  font-size:10px;font-weight:600;padding:3px 8px;border-radius:12px;
+  border:1px solid var(--border-l);background:var(--white);color:var(--text-ll);
+  cursor:pointer;transition:all .12s;font-family:var(--mono);
+}
+.rf:hover{border-color:var(--accent);color:var(--accent)}
+.rf.on{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.reg-list{flex:1;overflow-y:auto;padding:8px}
+.reg-list::-webkit-scrollbar{width:3px}
+.reg-list::-webkit-scrollbar-thumb{background:var(--border-l);border-radius:2px}
+.reg-empty{
+  display:flex;align-items:center;justify-content:center;height:100%;
+  color:#9ca3af;text-align:center;padding:20px;font-size:11px;line-height:1.7;
+}
+.ecard{
+  background:var(--bg);border:1px solid var(--border-l);border-radius:10px;
+  padding:10px 11px;margin-bottom:6px;animation:mfade .3s ease both;
+  transition:border-color .15s;
+}
+.ecard:hover{border-color:#fed7aa}
+.ecard.fresh{border-color:var(--accent);background:#fff7ed}
+.etag{
+  display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;
+  border-radius:4px;text-transform:uppercase;letter-spacing:.5px;
+  margin-bottom:5px;font-family:var(--mono);
+}
+.et-r{background:#dbeafe;color:#1d4ed8}
+.et-c{background:#dcfce7;color:#166534}
+.et-a{background:#fef3c7;color:#92400e}
+.et-x{background:#fee2e2;color:#991b1b}
+.et-w{background:#ede9fe;color:#5b21b6}
+.ename{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:3px}
+.einfo{font-size:10px;color:var(--text-ll);line-height:1.6;font-family:var(--mono)}
+.einfo b{color:var(--text-l)}
+.edel{
+  margin-top:6px;font-size:10px;padding:3px 8px;border-radius:5px;
+  border:1px solid var(--border-l);background:transparent;color:#9ca3af;
+  cursor:pointer;font-family:var(--sans);transition:all .12s;
+}
+.edel:hover{border-color:var(--red);color:var(--red)}
+.reg-foot{padding:9px 10px;border-top:1px solid var(--border-l);flex-shrink:0}
+.btn-dl{
+  width:100%;padding:9px;border-radius:8px;
+  background:var(--dark);color:var(--text-d);border:none;
+  font-family:var(--sans);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;
+}
+.btn-dl:hover{background:var(--dark2)}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  background:var(--dark);color:var(--text-d);
+  padding:10px 18px;border-radius:10px;
+  font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;
+  pointer-events:none;z-index:999;white-space:nowrap;
+  box-shadow:var(--shadow-d);font-family:var(--mono);
+}
+.toast.show{opacity:1}
+.toast.ok  {background:#15803d}
+.toast.warn{background:#d97706}
+.toast.err {background:#dc2626}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="sb-logo">P</div>
+    <div class="sb-brand-text">
+      <div class="sb-brand-name">Pitchly</div>
+      <div class="sb-brand-tag">restaurant.ai</div>
+    </div>
+  </div>
+
+  <!-- Langue -->
+  <div class="sb-lang">
+    <span class="sb-lang-lbl">Langue</span>
+    <button class="lang-btn on" onclick="setLang('fr',this)">FR</button>
+    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('es',this)">ES</button>
+    <button class="lang-btn" onclick="setLang('ar',this)">AR</button>
+  </div>
+
+  <!-- Modes -->
+  <div class="sb-nav">
+    <span class="sb-section-lbl" id="lbl-modes">Modes</span>
+    <button class="nav-item on" id="nb-r" onclick="setMode('reservation',this)"><span class="nav-ico">📅</span><span class="nav-lbl" id="lbl-r">Reservation</span><span class="nav-dot"></span></button>
+    <button class="nav-item" id="nb-c" onclick="setMode('commande',this)"><span class="nav-ico">🥡</span><span class="nav-lbl" id="lbl-c">Commande emporter</span><span class="nav-dot"></span></button>
+    <button class="nav-item" id="nb-q" onclick="setMode('questions',this)"><span class="nav-ico">💬</span><span class="nav-lbl" id="lbl-q">Questions clients</span><span class="nav-dot"></span></button>
+    <button class="nav-item" id="nb-a" onclick="setMode('avis',this)"><span class="nav-ico">⭐</span><span class="nav-lbl" id="lbl-a">Avis satisfaction</span><span class="nav-dot"></span></button>
+    <button class="nav-item" id="nb-x" onclick="setMode('annulation',this)"><span class="nav-ico">✖</span><span class="nav-lbl" id="lbl-x">Annulation</span><span class="nav-dot"></span></button>
+    <button class="nav-item" id="nb-w" onclick="setMode('attente',this)"><span class="nav-ico">⏳</span><span class="nav-lbl" id="lbl-w">Liste attente</span><span class="nav-dot"></span></button>
+  </div>
+
+  <!-- Config -->
+  <div class="sb-config">
+    <span class="sb-config-lbl" id="lbl-resto">Rechercher votre restaurant</span>
+    <div class="search-wrap">
+      <input class="sb-inp" id="biz-inp" type="text"
+        placeholder="Nom du restaurant, ville..."
+        oninput="searchRestaurant(this.value)"
+        autocomplete="off">
+      <div class="search-results" id="search-results"></div>
+    </div>
+    <div class="biz-selected" id="biz-selected" style="display:none">
+      <div class="biz-sel-name" id="biz-sel-name"></div>
+      <div class="biz-sel-addr" id="biz-sel-addr"></div>
+      <button class="biz-sel-clear" onclick="clearBiz()">✕ Changer</button>
+    </div>
+    <button class="btn-launch" id="btn-launch" onclick="launch()">Demarrer</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="sb-stats">
+    <div class="stat-box">
+      <div class="stat-lbl" id="lbl-entries">Entrees</div>
+      <div class="stat-n" id="sb-ct">0</div>
+    </div>
+    <button class="btn-exp-sm" id="btn-exp" onclick="exportAll()">Exporter</button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <div class="topbar" id="topbar" style="display:none">
+    <div class="tb-l">
+      <div class="tb-biz" id="tb-biz">—</div>
+      <div class="tb-badge" id="tb-badge">—</div>
+      <div class="tb-live"><div class="live-dot"></div><span id="lbl-online">En ligne</span></div>
+    </div>
+    <div class="tb-r">
+      <button class="btn-sm" id="btn-new" onclick="resetConv()">Nouvelle conversation</button>
+    </div>
+  </div>
+
+  <div class="welcome" id="welcome">
+    <div class="welcome-logo">🍽️</div>
+    <h2 id="w-title">Assistant vocal restaurant</h2>
+    <p id="w-desc">Choisissez le mode, entrez le nom du restaurant et demarrez. Le client parle librement dans sa langue, le robot comprend et gere tout.</p>
+    <div class="w-tags">
+      <div class="w-tag" id="wt1">Reservations</div>
+      <div class="w-tag" id="wt2">Commandes</div>
+      <div class="w-tag" id="wt3">FAQ auto</div>
+      <div class="w-tag" id="wt4">Avis clients</div>
+      <div class="w-tag" id="wt5">Annulations</div>
+      <div class="w-tag" id="wt6">Liste attente</div>
+    </div>
+  </div>
+
+  <div class="msgs" id="msgs" style="display:none"></div>
+
+  <div class="vbar" id="vbar">
+    <div class="vwave"><span></span><span></span><span></span><span></span><span></span></div>
+    <span id="lbl-speaking">L'assistant parle...</span>
+  </div>
+
+  <div class="izone" id="izone">
+    <div class="back-row">
+      <button class="btn-back" id="btn-back" onclick="goBack()" disabled>
+        ← <span id="lbl-back">Revenir en arriere</span>
+      </button>
+    </div>
+    <div class="irow">
+      <div class="mic-wrap">
+        <button class="mic-btn" id="mic-btn" onclick="toggleMic()">🎤</button>
+        <div class="mic-lbl" id="mic-lbl">Parler</div>
+      </div>
+      <textarea class="tinp" id="tinp" rows="1"
+        onkeydown="onKey(event)" oninput="resize(this)" disabled></textarea>
+      <button class="sbtn" id="sbtn" onclick="send()" disabled>➤</button>
+    </div>
+  </div>
+</main>
+
+<!-- ══ REGISTRE ══ -->
+<aside class="reg">
+  <div class="reg-head">
+    <div class="reg-ttl" id="lbl-registre">Registre</div>
+    <div class="reg-ct" id="reg-ct">0</div>
+  </div>
+  <div class="reg-filt">
+    <button class="rf on" onclick="filtReg('all',this)" id="rf-all">Tout</button>
+    <button class="rf" onclick="filtReg('Reservation',this)">RDV</button>
+    <button class="rf" onclick="filtReg('Commande',this)">Cmd</button>
+    <button class="rf" onclick="filtReg('Avis',this)">Avis</button>
+    <button class="rf" onclick="showClients(this)">Clients</button>
+  </div>
+  <div class="reg-list" id="reg-list">
+    <div class="reg-empty" id="reg-empty-msg">Les reservations apparaitront ici</div>
+  </div>
+  <div class="reg-foot">
+    <button class="btn-dl" id="btn-dl" onclick="exportAll()">Telecharger (.txt)</button>
+  </div>
+</aside>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ════════════════════════════════
+// TRADUCTIONS
+// ════════════════════════════════
+const T = {
+  fr: {
+    launch:'Demarrer', modes:'Modes', resto:'Restaurant',
+    entries:'Entrees', export:'Exporter', registre:'Registre',
+    online:'En ligne', speaking:'L\'assistant parle...',
+    back:'Revenir en arriere', newconv:'Nouvelle conversation',
+    placeholder:'Ou tapez votre reponse...',
+    w_title:'Assistant vocal restaurant',
+    w_desc:'Choisissez le mode, entrez le nom du restaurant et demarrez. Le client parle librement, le robot comprend et gere tout.',
+    lbl_r:'Reservation', lbl_c:'Commande emporter', lbl_q:'Questions clients',
+    lbl_a:'Avis satisfaction', lbl_x:'Annulation', lbl_w:'Liste attente',
+    parler:'Parler', ecoute:'Ecoute...', parle:'Parle...',
+    reg_empty:'Les reservations apparaitront ici',
+    // Greetings
+    g_resa: b=>`Bonjour et bienvenue chez ${b}. Je suis votre assistant pour les reservations. Quel est votre nom ?`,
+    g_cmd:  b=>`Bonjour chez ${b}. Je prends votre commande a emporter. Quel est votre nom ?`,
+    g_q:    b=>`Bonjour chez ${b}. Comment puis-je vous aider ?`,
+    g_avis: b=>`Bonjour. Merci d'avoir choisi ${b}. Avez-vous passe un bon moment ?`,
+    g_ann:  b=>`Bonjour chez ${b}. Vous souhaitez modifier ou annuler une reservation. Quel est votre nom ?`,
+    g_att:  b=>`Bonjour chez ${b}. Nous n'avons pas de table disponible. Souhaitez-vous etre sur liste d'attente ? Quel est votre nom ?`,
+    // Steps
+    q_couverts: n=>`Bonjour ${n}. Pour combien de personnes souhaitez-vous reserver ?`,
+    q_date:     n=>`Pour quelle date souhaitez-vous votre table ?`,
+    q_heure:    d=>`Le ${d}. A quelle heure souhaitez-vous votre table ?`,
+    q_confirm:  (recap)=>`${recap}\n\nConfirmez-vous cette reservation ?`,
+    q_plats:    n=>`Bonjour ${n}. Que souhaitez-vous commander ?`,
+    q_retrait:  ()=>`A quelle heure souhaitez-vous retirer votre commande ?`,
+    q_nb:       n=>`Bonjour ${n}. Pour combien de personnes ?`,
+    q_tel:      ()=>`Votre numero de telephone pour vous prevenir quand une table se libere ?`,
+    q_ann_date: n=>`Bonjour ${n}. Quelle est la date de la reservation a modifier ou annuler ?`,
+    q_ann_act:  d=>`Pour la reservation du ${d}. Souhaitez-vous annuler ou modifier ?`,
+    q_ann_mod:  ()=>`Quelle modification souhaitez-vous apporter ?`,
+    // Confirmations
+    c_resa: (b,n,d,h,cv)=>`Votre reservation est confirmee chez ${b}, le ${d} a ${h} pour ${cv} personne${parseInt(cv)>1?'s':''}. A bientot ${n}.`,
+    c_cmd:  (n,h)=>`Commande confirmee ${n}. Elle sera prete a ${h}. A tout a l'heure.`,
+    c_ann:  (n,d,b)=>`La reservation du ${d} est annulee ${n}. A bientot chez ${b}.`,
+    c_mod:  (m,n)=>`Modification enregistree : ${m}. Votre reservation est mise a jour. A bientot ${n}.`,
+    c_att:  (n,cv,tel)=>`${n}, vous etes sur liste d'attente pour ${cv} personne${parseInt(cv)>1?'s':''}. Nous vous appelons au ${tel} des qu'une table est disponible.`,
+    c_avis: n=>`Merci pour votre retour ${n}. Nous en tiendrons compte et esperons vous revoir bientot.`,
+    // Misc
+    not_understood:`Je n'ai pas bien compris. Pouvez-vous reformuler ?`,
+    modify:`Pas de probleme. Que souhaitez-vous modifier ?`,
+    goback_q:`Pouvez-vous repondre a nouveau a la question precedente ?`,
+    heure_titre:'Choisissez une heure',
+    bye:b=>`Merci et a bientot chez ${b}.`,
+    another:b=>`Bien. Que puis-je faire d'autre pour vous ?`,
+    recap_nom:'Nom', recap_cv:'Personnes', recap_date:'Date', recap_heure:'Heure', recap_lieu:'Lieu',
+  },
+  en: {
+    launch:'Start', modes:'Modes', resto:'Restaurant',
+    entries:'Entries', export:'Export', registre:'Register',
+    online:'Online', speaking:'Assistant speaking...',
+    back:'Go back', newconv:'New conversation',
+    placeholder:'Or type your answer...',
+    w_title:'Restaurant voice assistant',
+    w_desc:'Choose the mode, enter the restaurant name and start. The client speaks freely, the robot handles everything.',
+    lbl_r:'Reservation', lbl_c:'Takeaway order', lbl_q:'Customer questions',
+    lbl_a:'Satisfaction review', lbl_x:'Cancellation', lbl_w:'Waiting list',
+    parler:'Speak', ecoute:'Listening...', parle:'Speaking...',
+    reg_empty:'Reservations will appear here',
+    g_resa: b=>`Hello and welcome to ${b}. I am your reservation assistant. What is your name?`,
+    g_cmd:  b=>`Hello at ${b}. I will take your takeaway order. What is your name?`,
+    g_q:    b=>`Hello at ${b}. How can I help you?`,
+    g_avis: b=>`Hello. Thank you for choosing ${b}. Did you have a good time?`,
+    g_ann:  b=>`Hello at ${b}. You wish to modify or cancel a reservation. What is your name?`,
+    g_att:  b=>`Hello at ${b}. We have no available table at the moment. Would you like to be on the waiting list? What is your name?`,
+    q_couverts: n=>`Hello ${n}. For how many people would you like to reserve?`,
+    q_date:     n=>`For what date would you like your table?`,
+    q_heure:    d=>`On ${d}. At what time would you like your table?`,
+    q_confirm:  r=>`${r}\n\nDo you confirm this reservation?`,
+    q_plats:    n=>`Hello ${n}. What would you like to order?`,
+    q_retrait:  ()=>`At what time would you like to pick up your order?`,
+    q_nb:       n=>`Hello ${n}. For how many people?`,
+    q_tel:      ()=>`Your phone number so we can reach you when a table is available?`,
+    q_ann_date: n=>`Hello ${n}. What is the date of the reservation to modify or cancel?`,
+    q_ann_act:  d=>`For the reservation on ${d}. Would you like to cancel or modify?`,
+    q_ann_mod:  ()=>`What modification would you like to make?`,
+    c_resa: (b,n,d,h,cv)=>`Your reservation is confirmed at ${b} on ${d} at ${h} for ${cv} person${parseInt(cv)>1?'s':''}. See you soon ${n}.`,
+    c_cmd:  (n,h)=>`Order confirmed ${n}. It will be ready at ${h}. See you soon.`,
+    c_ann:  (n,d,b)=>`The reservation on ${d} has been cancelled ${n}. See you soon at ${b}.`,
+    c_mod:  (m,n)=>`Modification saved: ${m}. Your reservation has been updated. See you ${n}.`,
+    c_att:  (n,cv,tel)=>`${n}, you are on the waiting list for ${cv} person${parseInt(cv)>1?'s':''}. We will call you at ${tel} as soon as a table is available.`,
+    c_avis: n=>`Thank you for your feedback ${n}. We will take it into account and hope to see you again soon.`,
+    not_understood:`I did not quite understand. Could you rephrase?`,
+    modify:`No problem. What would you like to change?`,
+    goback_q:`Could you answer the previous question again?`,
+    heure_titre:'Choose a time',
+    bye:b=>`Thank you and see you soon at ${b}.`,
+    another:b=>`Of course. What else can I do for you?`,
+    recap_nom:'Name', recap_cv:'People', recap_date:'Date', recap_heure:'Time', recap_lieu:'Venue',
+  },
+  es: {
+    launch:'Iniciar', modes:'Modos', resto:'Restaurante',
+    entries:'Entradas', export:'Exportar', registre:'Registro',
+    online:'En linea', speaking:'El asistente habla...',
+    back:'Volver atras', newconv:'Nueva conversacion',
+    placeholder:'O escriba su respuesta...',
+    w_title:'Asistente vocal para restaurante',
+    w_desc:'Elija el modo, ingrese el nombre del restaurante y comience. El cliente habla libremente, el robot gestiona todo.',
+    lbl_r:'Reserva', lbl_c:'Pedido para llevar', lbl_q:'Preguntas clientes',
+    lbl_a:'Satisfaccion', lbl_x:'Cancelacion', lbl_w:'Lista espera',
+    parler:'Hablar', ecoute:'Escuchando...', parle:'Hablando...',
+    reg_empty:'Las reservas apareceran aqui',
+    g_resa: b=>`Hola y bienvenido a ${b}. Soy su asistente de reservas. Como se llama?`,
+    g_cmd:  b=>`Hola en ${b}. Voy a tomar su pedido para llevar. Como se llama?`,
+    g_q:    b=>`Hola en ${b}. Como puedo ayudarle?`,
+    g_avis: b=>`Hola. Gracias por elegir ${b}. Ha pasado un buen momento?`,
+    g_ann:  b=>`Hola en ${b}. Desea modificar o cancelar una reserva. Como se llama?`,
+    g_att:  b=>`Hola en ${b}. No hay mesas disponibles en este momento. Le gustaria estar en lista de espera? Como se llama?`,
+    q_couverts: n=>`Hola ${n}. Para cuantas personas desea reservar?`,
+    q_date:     n=>`Para que fecha desea su mesa?`,
+    q_heure:    d=>`El ${d}. A que hora desea su mesa?`,
+    q_confirm:  r=>`${r}\n\nConfirma esta reserva?`,
+    q_plats:    n=>`Hola ${n}. Que desea pedir?`,
+    q_retrait:  ()=>`A que hora desea recoger su pedido?`,
+    q_nb:       n=>`Hola ${n}. Para cuantas personas?`,
+    q_tel:      ()=>`Su numero de telefono para avisarle cuando haya mesa disponible?`,
+    q_ann_date: n=>`Hola ${n}. Cual es la fecha de la reserva a modificar o cancelar?`,
+    q_ann_act:  d=>`Para la reserva del ${d}. Desea cancelar o modificar?`,
+    q_ann_mod:  ()=>`Que modificacion desea hacer?`,
+    c_resa: (b,n,d,h,cv)=>`Su reserva esta confirmada en ${b} el ${d} a las ${h} para ${cv} persona${parseInt(cv)>1?'s':''}. Hasta pronto ${n}.`,
+    c_cmd:  (n,h)=>`Pedido confirmado ${n}. Estara listo a las ${h}. Hasta pronto.`,
+    c_ann:  (n,d,b)=>`La reserva del ${d} ha sido cancelada ${n}. Hasta pronto en ${b}.`,
+    c_mod:  (m,n)=>`Modificacion guardada: ${m}. Su reserva ha sido actualizada. Hasta pronto ${n}.`,
+    c_att:  (n,cv,tel)=>`${n}, esta en lista de espera para ${cv} persona${parseInt(cv)>1?'s':''}. Le llamaremos al ${tel} cuando haya mesa disponible.`,
+    c_avis: n=>`Gracias por su opinion ${n}. Lo tendremos en cuenta y esperamos verle pronto.`,
+    not_understood:`No he entendido bien. Podria reformular?`,
+    modify:`Sin problema. Que desea cambiar?`,
+    goback_q:`Podria responder de nuevo a la pregunta anterior?`,
+    heure_titre:'Elija una hora',
+    bye:b=>`Gracias y hasta pronto en ${b}.`,
+    another:b=>`Claro. En que mas puedo ayudarle?`,
+    recap_nom:'Nombre', recap_cv:'Personas', recap_date:'Fecha', recap_heure:'Hora', recap_lieu:'Lugar',
+  },
+  ar: {
+    launch:'بدء', modes:'الأوضاع', resto:'المطعم',
+    entries:'السجلات', export:'تصدير', registre:'السجل',
+    online:'متصل', speaking:'المساعد يتحدث...',
+    back:'العودة للخلف', newconv:'محادثة جديدة',
+    placeholder:'أو اكتب ردك...',
+    w_title:'مساعد صوتي للمطعم',
+    w_desc:'اختر الوضع وأدخل اسم المطعم وابدأ. يتحدث العميل بحرية، والروبوت يدير كل شيء.',
+    lbl_r:'حجز', lbl_c:'طلب للاخذ', lbl_q:'استفسارات العملاء',
+    lbl_a:'تقييم الرضا', lbl_x:'إلغاء', lbl_w:'قائمة الانتظار',
+    parler:'تحدث', ecoute:'جاري الاستماع...', parle:'يتحدث...',
+    reg_empty:'ستظهر الحجوزات هنا',
+    g_resa: b=>`مرحباً بك في ${b}. أنا مساعدك للحجز. ما اسمك؟`,
+    g_cmd:  b=>`مرحباً في ${b}. سأستلم طلبك للاخذ. ما اسمك؟`,
+    g_q:    b=>`مرحباً في ${b}. كيف يمكنني مساعدتك؟`,
+    g_avis: b=>`مرحباً. شكراً لاختيارك ${b}. هل أمضيت وقتاً ممتعاً؟`,
+    g_ann:  b=>`مرحباً في ${b}. تريد تعديل أو إلغاء حجز. ما اسمك؟`,
+    g_att:  b=>`مرحباً في ${b}. لا توجد طاولات متاحة حالياً. هل تريد أن تكون على قائمة الانتظار؟ ما اسمك؟`,
+    q_couverts: n=>`مرحباً ${n}. لكم شخص تريد الحجز؟`,
+    q_date:     n=>`في أي تاريخ تريد طاولتك؟`,
+    q_heure:    d=>`في ${d}. في أي ساعة تريد طاولتك؟`,
+    q_confirm:  r=>`${r}\n\nهل تؤكد هذا الحجز؟`,
+    q_plats:    n=>`مرحباً ${n}. ماذا تريد أن تطلب؟`,
+    q_retrait:  ()=>`في أي ساعة تريد استلام طلبك؟`,
+    q_nb:       n=>`مرحباً ${n}. لكم شخص؟`,
+    q_tel:      ()=>`رقم هاتفك حتى نتصل بك عند توفر طاولة؟`,
+    q_ann_date: n=>`مرحباً ${n}. ما تاريخ الحجز الذي تريد تعديله أو إلغاءه؟`,
+    q_ann_act:  d=>`حجز ${d}. هل تريد الإلغاء أم التعديل؟`,
+    q_ann_mod:  ()=>`ما التعديل الذي تريد إجراءه؟`,
+    c_resa: (b,n,d,h,cv)=>`تم تأكيد حجزك في ${b} يوم ${d} الساعة ${h} لـ ${cv} شخص. إلى اللقاء ${n}.`,
+    c_cmd:  (n,h)=>`تم تأكيد طلبك ${n}. سيكون جاهزاً الساعة ${h}. إلى اللقاء.`,
+    c_ann:  (n,d,b)=>`تم إلغاء حجز ${d} يا ${n}. إلى اللقاء في ${b}.`,
+    c_mod:  (m,n)=>`تم حفظ التعديل: ${m}. تم تحديث حجزك. إلى اللقاء ${n}.`,
+    c_att:  (n,cv,tel)=>`${n}، أنت على قائمة الانتظار لـ ${cv} شخص. سنتصل بك على ${tel} عند توفر طاولة.`,
+    c_avis: n=>`شكراً على تعليقك ${n}. سنأخذه بعين الاعتبار ونأمل رؤيتك قريباً.`,
+    not_understood:`لم أفهم جيداً. هل يمكنك إعادة الصياغة؟`,
+    modify:`لا مشكلة. ماذا تريد تغيير؟`,
+    goback_q:`هل يمكنك الإجابة على السؤال السابق مرة أخرى؟`,
+    heure_titre:'اختر وقتاً',
+    bye:b=>`شكراً وإلى اللقاء في ${b}.`,
+    another:b=>`بالطبع. كيف يمكنني مساعدتك؟`,
+    recap_nom:'الاسم', recap_cv:'أشخاص', recap_date:'التاريخ', recap_heure:'الوقت', recap_lieu:'المكان',
+  }
+};
+
+// ════════════════════════════════
+// STATE
+// ════════════════════════════════
+let lang     = 'fr';
+let mode     = 'reservation';
+let bizName  = '';
+let bizAddr  = '';
+let step     = 'idle';
+let rdv      = {};
+let convHist = [];
+let registry = JSON.parse(localStorage.getItem('p_reg5') || '[]');
+let regFilt  = 'all';
+let botBusy  = false;
+let searchTimer = null;
+let bizSelected = false;
+
+// ── MÉMOIRE CLIENTS ──
+// Stocke nom → {visites, derniere_date, couverts_habituels, allergies}
+let clientDB = JSON.parse(localStorage.getItem('p_clients') || '{}');
+
+// ── CRÉNEAUX COMPLETS ──
+// Capacité max par créneau (configurable par le gérant)
+const MAX_PAX_PER_SLOT = 20;
+// Créneaux disponibles
+const ALL_SLOTS = ['8h00','8h30','9h00','9h30','10h00','10h30','11h00','11h30','12h00','12h30','13h00','13h30','19h00','19h30','20h00','20h30','21h00','21h30','22h00'];
+
+// Calcule les couverts déjà réservés pour une date+heure donnée
+function getSlotPax(date, heure) {
+  return registry
+    .filter(r => r.type === 'Reservation' && r.date === date && r.heure === heure)
+    .reduce((sum, r) => sum + (parseInt(r.couverts) || 0), 0);
+}
+
+// Retourne les créneaux disponibles pour une date et un nombre de couverts
+function getAvailableSlots(date, couverts) {
+  const nb = parseInt(couverts) || 2;
+  return ALL_SLOTS.filter(h => getSlotPax(date, h) + nb <= MAX_PAX_PER_SLOT);
+}
+
+// Trouve un client par nom (correspondance approximative)
+function findClient(nom) {
+  const key = nom.toLowerCase().trim();
+  // Cherche correspondance exacte d'abord
+  if (clientDB[key]) return { key, data: clientDB[key] };
+  // Puis correspondance partielle
+  for (const k of Object.keys(clientDB)) {
+    if (k.includes(key) || key.includes(k)) return { key: k, data: clientDB[k] };
+  }
+  return null;
+}
+
+// Enregistre/met à jour un client
+function saveClient(nom, data) {
+  const key = nom.toLowerCase().trim();
+  const existing = clientDB[key] || { visites: 0, derniere_date: null, couverts_habituels: null, allergies: null, prenom: nom };
+  clientDB[key] = { ...existing, ...data, visites: (existing.visites || 0) + 1, derniere_date: new Date().toLocaleDateString('fr-FR') };
+  localStorage.setItem('p_clients', JSON.stringify(clientDB));
+}
+
+// ════════════════════════════════
+// RECHERCHE RESTAURANT — OpenStreetMap Nominatim
+// ════════════════════════════════
+async function searchRestaurant(query) {
+  const box = document.getElementById('search-results');
+  if (!query || query.length < 3) { box.classList.remove('open'); return; }
+
+  // Debounce 400ms pour ne pas spammer l'API
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(async () => {
+    box.innerHTML = `<div class="sr-loading">Recherche en cours...</div>`;
+    box.classList.add('open');
+
+    try {
+      // Nominatim OpenStreetMap — gratuit, sans clé API
+      const url = `https://nominatim.openstreetmap.org/search?` +
+        `q=${encodeURIComponent(query + ' restaurant')}&` +
+        `format=json&addressdetails=1&limit=6&` +
+        `countrycodes=fr&` +
+        `accept-language=fr`;
+
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'Pitchly-Restaurant-Assistant/1.0' }
+      });
+      const data = await res.json();
+
+      if (!data.length) {
+        box.innerHTML = `<div class="sr-empty">Aucun restaurant trouvé. Essayez un autre nom.</div>`;
+        return;
+      }
+
+      box.innerHTML = '';
+      data.forEach(place => {
+        const name = place.name || place.display_name.split(',')[0];
+        const addr = place.display_name;
+        // Extraire adresse courte
+        const a = place.address || {};
+        const shortAddr = [
+          a.road || a.street,
+          a.house_number,
+          a.postcode,
+          a.city || a.town || a.village || a.municipality
+        ].filter(Boolean).join(' ');
+
+        const item = document.createElement('div');
+        item.className = 'sr-item';
+        item.innerHTML = `
+          <div class="sr-name">${name}</div>
+          <div class="sr-addr">${shortAddr || addr.slice(0,60)}</div>`;
+        item.onclick = () => selectRestaurant(name, shortAddr || addr.split(',').slice(0,3).join(','));
+        box.appendChild(item);
+      });
+
+    } catch(e) {
+      box.innerHTML = `<div class="sr-empty">Erreur de connexion. Vérifiez votre internet.</div>`;
+    }
+  }, 400);
+}
+
+function selectRestaurant(name, addr) {
+  bizName     = name;
+  bizAddr     = addr;
+  bizSelected = true;
+
+  // Mettre à jour l'UI
+  document.getElementById('biz-inp').value = name;
+  document.getElementById('search-results').classList.remove('open');
+  document.getElementById('biz-selected').style.display = 'block';
+  document.getElementById('biz-sel-name').textContent = name;
+  document.getElementById('biz-sel-addr').textContent = addr;
+  document.getElementById('biz-inp').style.display = 'none';
+}
+
+function clearBiz() {
+  bizName     = '';
+  bizAddr     = '';
+  bizSelected = false;
+  document.getElementById('biz-inp').value = '';
+  document.getElementById('biz-inp').style.display = 'block';
+  document.getElementById('biz-selected').style.display = 'none';
+  document.getElementById('search-results').classList.remove('open');
+  document.getElementById('biz-inp').focus();
+}
+
+// Fermer les résultats si on clique ailleurs
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) {
+    const box = document.getElementById('search-results');
+    if (box) box.classList.remove('open');
+  }
+});
+
+const t = () => T[lang] || T.fr;
+
+// ════════════════════════════════
+// LANGUE
+// ════════════════════════════════
+function setLang(l, btn) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+  applyTranslations();
+}
+
+function applyTranslations() {
+  const T2 = t();
+  // Sidebar
+  document.getElementById('btn-launch').textContent  = T2.launch;
+  document.getElementById('lbl-modes').textContent   = T2.modes;
+  document.getElementById('lbl-resto').textContent   = T2.resto;
+  document.getElementById('lbl-entries').textContent = T2.entries;
+  document.getElementById('btn-exp').textContent     = T2.export;
+  document.getElementById('lbl-registre').textContent= T2.registre;
+  document.getElementById('btn-exp-sm') && (document.querySelector('.btn-exp-sm').textContent = T2.export);
+  // Modes
+  document.getElementById('lbl-r').textContent = T2.lbl_r;
+  document.getElementById('lbl-c').textContent = T2.lbl_c;
+  document.getElementById('lbl-q').textContent = T2.lbl_q;
+  document.getElementById('lbl-a').textContent = T2.lbl_a;
+  document.getElementById('lbl-x').textContent = T2.lbl_x;
+  document.getElementById('lbl-w').textContent = T2.lbl_w;
+  // Top bar
+  document.getElementById('lbl-online').textContent  = T2.online;
+  document.getElementById('lbl-speaking').textContent= T2.speaking;
+  document.getElementById('btn-new') && (document.getElementById('btn-new').textContent = T2.newconv);
+  document.getElementById('lbl-back').textContent    = T2.back;
+  // Input placeholder
+  document.getElementById('tinp').placeholder = T2.placeholder;
+  // Welcome
+  document.getElementById('w-title').textContent = T2.w_title;
+  document.getElementById('w-desc').textContent  = T2.w_desc;
+  // Reg empty
+  const re = document.querySelector('.reg-empty');
+  if (re) re.textContent = T2.reg_empty;
+  // Mic
+  document.getElementById('mic-lbl').textContent = T2.parler;
+}
+
+// ════════════════════════════════
+// VOIX
+// ════════════════════════════════
+const synth = window.speechSynthesis;
+let voices  = {};
+
+function loadVoices() {
+  const vs = synth.getVoices();
+  if (!vs.length) return;
+
+  const pick = (tests) => { for (const t of tests) { const f=vs.find(t); if(f) return f; } return null; };
+
+  voices.fr = pick([
+    v=>v.lang==='fr-FR'&&/thomas/i.test(v.name),
+    v=>v.lang==='fr-FR'&&/amelie|amélie/i.test(v.name),
+    v=>v.lang==='fr-FR'&&/google/i.test(v.name),
+    v=>v.lang==='fr-FR',
+    v=>v.lang.startsWith('fr'),
+  ]);
+  voices.en = pick([
+    v=>v.lang==='en-GB'&&/google/i.test(v.name),
+    v=>v.lang==='en-US'&&/google/i.test(v.name),
+    v=>v.lang.startsWith('en'),
+  ]);
+  voices.es = pick([
+    v=>v.lang==='es-ES'&&/google/i.test(v.name),
+    v=>v.lang.startsWith('es'),
+  ]);
+  voices.ar = pick([
+    v=>v.lang==='ar-SA',
+    v=>v.lang.startsWith('ar'),
+  ]);
+}
+loadVoices();
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+
+function speak(text, cb) {
+  const clean = text
+    .replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]|[\u{1F300}-\u{1F9FF}]/gu,'')
+    .replace(/\*\*(.*?)\*\*/g,'$1').replace(/<[^>]+>/g,'')
+    .replace(/\n+/g,'. ').replace(/\s{2,}/g,' ').trim();
+
+  synth.cancel();
+  botBusy=true; setMic('speaking');
+  document.getElementById('vbar').style.display='flex';
+
+  const voice = voices[lang];
+  if (!voice) { fin(); if(cb)cb(); return; }
+
+  const u = new SpeechSynthesisUtterance(clean);
+  u.voice=voice; u.lang={fr:'fr-FR',en:'en-GB',es:'es-ES',ar:'ar-SA'}[lang]||'fr-FR';
+  u.rate=0.9; u.pitch=1.0; u.volume=1;
+  u.onend=u.onerror=()=>{fin();if(cb)cb();};
+  synth.speak(u);
+
+  function fin(){
+    botBusy=false;
+    document.getElementById('vbar').style.display='none';
+    setMic('idle');
+  }
+}
+
+// ════════════════════════════════
+// MICRO
+// ════════════════════════════════
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recog=null, micOn=false;
+
+function initRecog() {
+  if (!SR) { setMic('nosupport'); return false; }
+  recog = new SR();
+  recog.lang = {fr:'fr-FR',en:'en-GB',es:'es-ES',ar:'ar-SA'}[lang]||'fr-FR';
+  recog.interimResults=false; recog.continuous=false; recog.maxAlternatives=1;
+  recog.onresult = e=>{
+    const txt=e.results[0][0].transcript.trim();
+    stopMic(); if(txt){document.getElementById('tinp').value=txt;send();}
+  };
+  recog.onspeechend=()=>stopMic();
+  recog.onerror=e=>{stopMic();if(e.error==='not-allowed')toast('Autorisez le micro','err');};
+  recog.onend=()=>{if(micOn)stopMic();};
+  return true;
+}
+function toggleMic(){
+  if(botBusy){toast(t().speaking,'warn');return;}
+  if(step==='idle'){toast(t().launch,'warn');return;}
+  micOn?stopMic():startMic();
+}
+function startMic(){
+  if(!recog&&!initRecog())return;
+  recog.lang={fr:'fr-FR',en:'en-GB',es:'es-ES',ar:'ar-SA'}[lang]||'fr-FR';
+  micOn=true;setMic('listening');
+  try{recog.start();}catch(e){stopMic();}
+}
+function stopMic(){micOn=false;setMic('idle');try{recog.stop();}catch(e){}}
+function setMic(s){
+  const btn=document.getElementById('mic-btn');
+  const lbl=document.getElementById('mic-lbl');
+  const T2=t();
+  if(s==='listening'){btn.className='mic-btn listening';btn.innerHTML='⏹';lbl.textContent=T2.ecoute;lbl.className='mic-lbl listening';}
+  else if(s==='speaking'){btn.className='mic-btn speaking';btn.innerHTML='🔊';lbl.textContent=T2.parle;lbl.className='mic-lbl speaking';}
+  else if(s==='nosupport'){btn.className='mic-btn';btn.innerHTML='🚫';lbl.textContent='N/A';btn.disabled=true;}
+  else{btn.className='mic-btn';btn.innerHTML='🎤';lbl.textContent=T2.parler;lbl.className='mic-lbl';}
+}
+
+// ════════════════════════════════
+// MODE & SESSION
+// ════════════════════════════════
+function setMode(m,btn){
+  mode=m;
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function launch(){
+  // Si restaurant sélectionné via recherche, utiliser ce nom
+  // Sinon utiliser ce qui est tapé dans le champ
+  if (!bizSelected) {
+    const val = document.getElementById('biz-inp').value.trim();
+    bizName = val || (lang==='fr'?'le restaurant':lang==='en'?'the restaurant':lang==='es'?'el restaurante':'المطعم');
+  }
+
+  step='start'; rdv={}; convHist=[];
+
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('topbar').style.display='flex';
+  document.getElementById('msgs').style.display='flex';
+  document.getElementById('izone').style.display='block';
+  document.getElementById('msgs').innerHTML='';
+  document.getElementById('tb-biz').textContent=bizName;
+  document.getElementById('tb-badge').textContent=t()['lbl_'+mode[0]]||mode;
+
+  lockInput(true); setMic('idle');
+  if(!recog) setTimeout(initRecog,300);
+
+  const g=greeting();
+  pushHist();
+  addBotMsg(g);
+  speak(g,()=>lockInput(false));
+}
+
+function resetConv(){
+  synth.cancel(); stopMic();
+  step='start'; rdv={}; convHist=[];
+  document.getElementById('msgs').innerHTML='';
+  lockInput(true);
+  const g=greeting();
+  pushHist();
+  addBotMsg(g);
+  speak(g,()=>lockInput(false));
+}
+
+function greeting(){
+  const gMap={
+    reservation:'g_resa', commande:'g_cmd', questions:'g_q',
+    avis:'g_avis', annulation:'g_ann', attente:'g_att'
+  };
+  step={reservation:'nom',commande:'nom_cmd',questions:'q',avis:'avis_q',annulation:'ann_nom',attente:'att_nom'}[mode]||'nom';
+  return t()[gMap[mode]](bizName);
+}
+
+// ════════════════════════════════
+// RETOUR ARRIÈRE
+// ════════════════════════════════
+function pushHist(){
+  convHist.push({step,rdv:JSON.parse(JSON.stringify(rdv))});
+  document.getElementById('btn-back').disabled=convHist.length<=1;
+}
+
+function goBack(){
+  if(convHist.length<=1) return;
+  convHist.pop();
+  const prev=convHist[convHist.length-1];
+  step=prev.step; rdv=JSON.parse(JSON.stringify(prev.rdv));
+  document.getElementById('btn-back').disabled=convHist.length<=1;
+
+  const msgs=document.getElementById('msgs');
+  // Enlever les derniers messages
+  let rem=2;
+  while(rem>0&&msgs.lastChild){msgs.removeChild(msgs.lastChild);rem--;}
+  ['cal-msg','time-msg'].forEach(id=>{const e=document.getElementById(id);if(e)e.remove();});
+
+  lockInput(true);
+  const q=t().goback_q;
+  addBotMsg(q);
+  speak(q,()=>lockInput(false));
+}
+
+// ════════════════════════════════
+// INPUT
+// ════════════════════════════════
+function lockInput(on){
+  document.getElementById('tinp').disabled=on;
+  document.getElementById('sbtn').disabled=on;
+  if(!on) document.getElementById('tinp').focus();
+}
+function send(){
+  const inp=document.getElementById('tinp');
+  const txt=inp.value.trim(); if(!txt) return;
+  inp.value=''; inp.style.height='';
+  addUserMsg(txt); lockInput(true); showTyping();
+  setTimeout(()=>process(txt),420+Math.random()*130);
+}
+function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
+function resize(el){el.style.height='';el.style.height=Math.min(el.scrollHeight,92)+'px';}
+
+// ════════════════════════════════
+// LOGIQUE CONVERSATION
+// ════════════════════════════════
+function process(input){
+  removeTyping();
+  const txt=input.toLowerCase().trim();
+  const T2=t();
+  let res='';
+  pushHist();
+
+  if(mode==='reservation'){
+    if(step==='nom'){
+      rdv.nom=xName(input);
+      // ── MÉMOIRE CLIENT ──
+      const known = findClient(rdv.nom);
+      if (known) {
+        rdv.clientConnu = true;
+        rdv.allergies   = known.data.allergies || null;
+        const cv  = known.data.couverts_habituels;
+        const vis = known.data.visites || 1;
+        const dat = known.data.derniere_date || '';
+        const msg_fr = `Bonjour ${rdv.nom}, content de vous revoir ! C'est votre ${vis + 1}eme visite chez ${bizName}.${dat?' Votre derniere reservation date du '+dat+'.':''}${cv?' Vous venez habituellement a '+cv+' personnes, est-ce la meme chose cette fois ?':' Pour combien de personnes souhaitez-vous reserver ?'}`;
+        const msg_en = `Welcome back ${rdv.nom}! This is your ${vis + 1}${vis===1?'nd':vis===2?'rd':'th'} visit at ${bizName}.${cv?' You usually come for '+cv+', same this time?':' For how many people?'}`;
+        const msg_es = `Bienvenido de nuevo ${rdv.nom}. Es su ${vis + 1}a visita en ${bizName}.${cv?' Suele venir para '+cv+' personas, igual esta vez?':' Para cuantas personas?'}`;
+        const msg_ar = `مرحباً بعودتك ${rdv.nom}! هذه زيارتك ${vis + 1} في ${bizName}.${cv?' عادةً تأتي لـ '+cv+' أشخاص، نفس الشيء؟':' لكم شخص؟'}`;
+        const msgs = {fr:msg_fr,en:msg_en,es:msg_es,ar:msg_ar};
+        step = cv ? 'confirm_couverts' : 'couverts';
+        if (cv) rdv.couverts_suggestion = cv;
+        res = msgs[lang] || msg_fr;
+      } else {
+        rdv.clientConnu = false;
+        res = T2.q_couverts(rdv.nom);
+        step = 'couverts';
+      }
+
+    } else if(step==='confirm_couverts'){
+      // Client connu — confirme ou change le nombre de couverts
+      const num = xNum(txt);
+      if(xYes(txt) || (!num && !/non|no|change|different/i.test(txt))){
+        rdv.couverts = rdv.couverts_suggestion;
+        res = T2.q_date(rdv.nom); step='date';
+      } else if(num){
+        rdv.couverts = num;
+        res = T2.q_date(rdv.nom); step='date';
+      } else {
+        res = T2.q_couverts(rdv.nom); step='couverts';
+      }
+
+    } else if(step==='couverts'){
+      rdv.couverts=xNum(txt)||input;
+      res=T2.q_date(rdv.nom); step='date';
+
+    } else if(step==='date'){
+      rdv.date=input;
+      res=T2.q_heure(rdv.date); step='heure';
+
+    } else if(step==='heure'){
+      rdv.heure=input;
+      // ── CRÉNEAUX COMPLETS ──
+      const available = getAvailableSlots(rdv.date, rdv.couverts);
+      if(!available.includes(rdv.heure) && available.length > 0){
+        // Le créneau demandé est plein — proposer alternatives
+        const alts = available.filter(h=>{
+          const hNum = parseInt(h.replace('h',''));
+          const reqNum = parseInt(rdv.heure.replace('h',''));
+          return Math.abs(hNum - reqNum) <= 2;
+        }).slice(0,3);
+        const altList = alts.length ? alts.join(', ') : available.slice(0,3).join(', ');
+        const msg_fr = `Je suis desole, le creneau de ${rdv.heure} est complet pour ${rdv.couverts} personne${parseInt(rdv.couverts)>1?'s':''}. Je vous propose plutot : ${altList}. Laquelle vous convient ?`;
+        const msg_en = `Sorry, the ${rdv.heure} slot is fully booked for ${rdv.couverts}. I can offer you: ${altList}. Which works for you?`;
+        const msg_es = `Lo siento, el turno de las ${rdv.heure} esta completo para ${rdv.couverts}. Puedo ofrecerle: ${altList}. Cual le viene bien?`;
+        const msg_ar = `آسف، وقت ${rdv.heure} ممتلئ لـ ${rdv.couverts} أشخاص. يمكنني اقتراح: ${altList}. أيها يناسبك؟`;
+        res = {fr:msg_fr,en:msg_en,es:msg_es,ar:msg_ar}[lang]||msg_fr;
+        step='heure'; // reste sur heure pour rechoisir
+      } else if(available.length === 0){
+        // Aucun créneau disponible ce jour
+        const msg_fr = `Je suis desole, le restaurant est complet le ${rdv.date}. Souhaitez-vous choisir une autre date ou etre sur liste d'attente ?`;
+        const msg_en = `Sorry, the restaurant is fully booked on ${rdv.date}. Would you like another date or to be on the waiting list?`;
+        res = {fr:msg_fr,en:msg_en}[lang]||msg_fr;
+        step='date';
+      } else {
+        // Créneau OK — poser la question allergies si pas déjà connue
+        if(!rdv.allergies){
+          const msg_fr = `Parfait. Avant de confirmer, y a-t-il des allergies alimentaires ou des regimes particuliers parmi vos convives ? (Dites non si aucun)`;
+          const msg_en = `Great. Before confirming, are there any food allergies or dietary requirements? (Say no if none)`;
+          const msg_es = `Perfecto. Antes de confirmar, hay alergias alimentarias o regimenes especiales entre sus comensales? (Diga no si ninguno)`;
+          const msg_ar = `ممتاز. قبل التأكيد، هل هناك حساسيات غذائية أو أنظمة غذائية خاصة؟ (قل لا إن لم يكن)`;
+          res = {fr:msg_fr,en:msg_en,es:msg_es,ar:msg_ar}[lang]||msg_fr;
+          step='allergies';
+        } else {
+          res=T2.q_confirm(recap(T2)); step='confirm';
+        }
+      }
+
+    } else if(step==='allergies'){
+      if(/non|no|aucun|none|ninguno|لا/i.test(txt)){
+        rdv.allergies = null;
+      } else {
+        rdv.allergies = input;
+      }
+      res=T2.q_confirm(recap(T2)); step='confirm';
+
+    } else if(step==='confirm'){
+      if(xYes(txt)){
+        // Sauvegarder dans la mémoire client
+        saveClient(rdv.nom, {
+          couverts_habituels: rdv.couverts,
+          allergies: rdv.allergies || null,
+          prenom: rdv.nom
+        });
+        save('Reservation');
+        res=T2.c_resa(bizName,rdv.nom,rdv.date,rdv.heure,rdv.couverts);
+        if(rdv.allergies){
+          const note = lang==='fr' ? ` Note allergies transmise en cuisine : ${rdv.allergies}.` : lang==='en' ? ` Allergy note sent to kitchen: ${rdv.allergies}.` : ` Nota de alergias enviada a cocina: ${rdv.allergies}.`;
+          res += note;
+        }
+        step='done';
+      } else { res=T2.modify; step='couverts'; }
+    } else if(step==='done'){ res=handleDone(txt,T2); }
+  }
+
+  else if(mode==='commande'){
+    if(step==='nom_cmd'){
+      rdv.nom=xName(input);
+      res=T2.q_plats(rdv.nom); step='plats';
+    } else if(step==='plats'){
+      rdv.plats=input;
+      res=T2.q_retrait(); step='retrait';
+    } else if(step==='retrait'){
+      rdv.heure=xTime(input)||input;
+      res=T2.q_confirm(`${T2.recap_nom}: ${rdv.nom}\n${lang==='fr'?'Commande':'Order'}: ${rdv.plats}\n${T2.recap_heure}: ${rdv.heure}`);
+      step='confirm_cmd';
+    } else if(step==='confirm_cmd'){
+      if(xYes(txt)){save('Commande');res=T2.c_cmd(rdv.nom,rdv.heure);step='done';}
+      else{res=T2.modify;step='plats';}
+    } else if(step==='done'){ res=handleDone(txt,T2); }
+  }
+
+  else if(mode==='questions'){
+    res=faq(txt,T2);
+  }
+
+  else if(mode==='avis'){
+    if(step==='avis_q'){
+      rdv.nom=xName(input);
+      if(/oui|bien|super|excellent|parfait|top|yes|good|great|bueno|excelente|نعم|جيد/i.test(txt)){
+        res=lang==='fr'?`Merci ${rdv.nom}. Nous sommes ravis. Pourriez-vous laisser un avis sur Google ou TripAdvisor ?`
+          :lang==='en'?`Thank you ${rdv.nom}. We are delighted. Could you leave a review on Google or TripAdvisor?`
+          :lang==='es'?`Gracias ${rdv.nom}. Estamos encantados. Podria dejar una resena en Google o TripAdvisor?`
+          :`شكراً ${rdv.nom}. نحن سعداء. هل يمكنك ترك تقييم على Google أو TripAdvisor؟`;
+        step='avis_det';
+      } else {
+        res=lang==='fr'?`Nous sommes desoles. Pouvez-vous nous dire ce qui n'a pas ete ?`
+          :lang==='en'?`We are sorry. Could you tell us what went wrong?`
+          :lang==='es'?`Lo sentimos. Podria decirnos que salio mal?`
+          :`نأسف على ذلك. هل يمكنك إخبارنا بما لم يكن جيداً؟`;
+        step='avis_neg';
+      }
+    } else if(step==='avis_det'||step==='avis_neg'){
+      rdv.avis=input; save('Avis');
+      res=T2.c_avis(rdv.nom); step='done';
+    } else if(step==='done'){ res=handleDone(txt,T2); }
+  }
+
+  else if(mode==='annulation'){
+    if(step==='ann_nom'){rdv.nom=xName(input);res=T2.q_ann_date(rdv.nom);step='ann_date';}
+    else if(step==='ann_date'){rdv.date=xDate(input);res=T2.q_ann_act(rdv.date);step='ann_action';}
+    else if(step==='ann_action'){
+      if(/annuler|cancel|إلغاء|cancelar/i.test(txt)){save('Annulation');res=T2.c_ann(rdv.nom,rdv.date,bizName);step='done';}
+      else{res=T2.q_ann_mod();step='ann_modif';}
+    } else if(step==='ann_modif'){
+      rdv.modif=input;save('Modification');res=T2.c_mod(input,rdv.nom);step='done';
+    } else if(step==='done'){ res=handleDone(txt,T2); }
+  }
+
+  else if(mode==='attente'){
+    if(step==='att_nom'){rdv.nom=xName(input);res=T2.q_nb(rdv.nom);step='att_nb';}
+    else if(step==='att_nb'){rdv.couverts=xNum(txt)||input;res=T2.q_tel();step='att_tel';}
+    else if(step==='att_tel'){rdv.tel=input;save('Liste attente');res=T2.c_att(rdv.nom,rdv.couverts,rdv.tel);step='done';}
+    else if(step==='done'){ res=handleDone(txt,T2); }
+  }
+
+  if(!res) res=T2.not_understood;
+  addBotMsg(res);
+  speak(res,()=>lockInput(step!=='idle'));
+}
+
+function handleDone(txt,T2){
+  if(/oui|nouveau|autre|yes|new|another|sí|nuevo|otra|نعم|جديد/i.test(txt)){
+    rdv={}; convHist=[];
+    const g=greeting(); pushHist(); return g;
+  }
+  step='idle';
+  return T2.bye(bizName);
+}
+
+// ════════════════════════════════
+// FAQ multilingue
+// ════════════════════════════════
+function faq(txt,T2){
+  if(/heure|ouvert|horaire|ferm|hour|open|abierto|horario|ساعات|مفتوح/i.test(txt))
+    return lang==='fr'?'Nous sommes ouverts du mardi au dimanche. Dejeuner de 12h a 14h30, diner de 19h a 22h30. Ferme le lundi.'
+          :lang==='en'?'We are open Tuesday to Sunday. Lunch from 12pm to 2:30pm, dinner from 7pm to 10:30pm. Closed on Monday.'
+          :lang==='es'?'Estamos abiertos de martes a domingo. Almuerzo de 12h a 14h30, cena de 19h a 22h30. Cerrado el lunes.'
+          :'نحن مفتوحون من الثلاثاء إلى الأحد. الغداء من 12 إلى 14:30، والعشاء من 19 إلى 22:30. مغلق يوم الاثنين.';
+  if(/adresse|ou|address|where|dirección|donde|عنوان|أين/i.test(txt))
+    return lang==='fr'?`Retrouvez ${bizName} au ${bizAddr || '[adresse non renseignee]'}.`
+          :lang==='en'?`Find ${bizName} at ${bizAddr || '[address not set]'}.`
+          :lang==='es'?`Encuentre ${bizName} en ${bizAddr || '[direccion no indicada]'}.`
+          :`يمكنكم إيجاد ${bizName} في ${bizAddr || '[العنوان غير محدد]'}.`;
+  if(/menu|plat|carte|dish|food|comida|carta|طعام|قائمة/i.test(txt))
+    return lang==='fr'?'Notre carte change chaque saison avec des produits locaux. Consultez notre site pour la carte actuelle.'
+          :lang==='en'?'Our menu changes each season with local produce. Check our website for the current menu.'
+          :lang==='es'?'Nuestra carta cambia cada temporada con productos locales. Consulte nuestro sitio web.'
+          :'تتغير قائمتنا كل موسم بمنتجات محلية. راجع موقعنا للقائمة الحالية.';
+  if(/parking|voiture|car|coche|سيارة|موقف/i.test(txt))
+    return lang==='fr'?'Un parking public est disponible a deux minutes a pied.'
+          :lang==='en'?'A public parking lot is available two minutes away on foot.'
+          :lang==='es'?'Hay un aparcamiento publico a dos minutos a pie.'
+          :'يتوفر موقف سيارات عام على بُعد دقيقتين سيراً.';
+  if(/vegetar|vegan|allergi|intoleran|alergi|حساسية|نباتي/i.test(txt))
+    return lang==='fr'?'Nous proposons des options vegetariennes et nous adaptons nos plats aux allergies sur demande.'
+          :lang==='en'?'We offer vegetarian options and adapt our dishes for allergies upon request.'
+          :lang==='es'?'Ofrecemos opciones vegetarianas y adaptamos nuestros platos a las alergias bajo pedido.'
+          :'نقدم خيارات نباتية ونتكيف مع الحساسيات الغذائية عند الطلب.';
+  if(/tarif|prix|cost|precio|caro|سعر|تكلفة/i.test(txt))
+    return lang==='fr'?'Notre menu dejeuner est autour de 20 euros et le diner autour de 35 euros par personne.'
+          :lang==='en'?'Our lunch menu is around 20 euros and dinner around 35 euros per person.'
+          :lang==='es'?'Nuestro menu de almuerzo es de unos 20 euros y la cena de unos 35 euros por persona.'
+          :'قائمة الغداء حوالي 20 يورو والعشاء حوالي 35 يورو للشخص.';
+  return T2.not_understood;
+}
+
+// ════════════════════════════════
+// RECAP
+// ════════════════════════════════
+function recap(T2){
+  let r = `${T2.recap_nom}: ${rdv.nom}\n${T2.recap_cv}: ${rdv.couverts}\n${T2.recap_date}: ${rdv.date}\n${T2.recap_heure}: ${rdv.heure}\n${T2.recap_lieu}: ${bizName}`;
+  if(rdv.allergies) r += `\nAllergies: ${rdv.allergies}`;
+  return r;
+}
+
+// ════════════════════════════════
+// EXTRACTEURS
+// ════════════════════════════════
+function xName(text){
+  const ps=[/je m.appelle ([a-zàâäéèêëîïôöùûüç\s\-]+)/i,/my name is ([a-z\s\-]+)/i,/me llamo ([a-záéíóú\s\-]+)/i,/اسمي ([^\s]+)/i,/c.est ([a-zàâäéèêëîïôöùûüç\s\-]+)/i];
+  for(const p of ps){const m=text.match(p);if(m)return cap(m[1].trim().split(/\s+/).slice(0,3).join(' '));}
+  return cap(text.trim().split(/\s+/).slice(0,3).join(' '));
+}
+function xDate(text){
+  const t2=text.toLowerCase(),now=new Date();
+  const DN=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  const MN=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  if(/aujourd.hui|today|hoy|اليوم/i.test(t2)) return fmt(now);
+  if(/demain|tomorrow|mañana|غداً/i.test(t2)){const d=new Date(now);d.setDate(d.getDate()+1);return fmt(d);}
+  if(/semaine prochaine|next week|semana próxima|الأسبوع القادم/i.test(t2)){const d=new Date(now);d.setDate(d.getDate()+7);return fmt(d);}
+  if(/ce week.?end|weekend/i.test(t2)){const d=new Date(now);d.setDate(d.getDate()+(6-d.getDay()));return fmt(d);}
+  for(let i=0;i<DN.length;i++){if(t2.includes(DN[i])){const d=new Date(now);const di=(i-d.getDay()+7)%7||7;d.setDate(d.getDate()+di);return fmt(d);}}
+  const nm=t2.match(/(\d{1,2})\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)/i);
+  if(nm){const day=parseInt(nm[1]);const mo=MN.findIndex(m=>nm[2].toLowerCase().startsWith(m.slice(0,4)));if(mo>=0){const d=new Date(now.getFullYear(),mo,day);if(d<now)d.setFullYear(d.getFullYear()+1);return fmt(d);}}
+  return cap(text.trim());
+}
+function xTime(text){
+  const t2=text.toLowerCase().replace(/\s/g,'');
+  for(const p of[/(\d{1,2})h(\d{2})/,/(\d{1,2})h/,/(\d{1,2}):(\d{2})/]){const m=t2.match(p);if(m)return`${m[1]}h${m[2]||'00'}`;}
+  if(/matin|morning|mañana/i.test(text)) return'9h00';
+  if(/midi|noon|mediodía/i.test(text))   return'12h00';
+  if(/soir|evening|noche/i.test(text))   return'19h00';
+  if(/20 min/i.test(text)) return lang==='fr'?'dans 20 min':'in 20 min';
+  if(/30 min/i.test(text)) return lang==='fr'?'dans 30 min':'in 30 min';
+  if(/45 min/i.test(text)) return lang==='fr'?'dans 45 min':'in 45 min';
+  return text.trim();
+}
+function xNum(t2){
+  const w={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,one:1,two:2,three:3,four:4,five:5,six_:6,seven:7,eight:8,nine:9,ten:10};
+  for(const[k,v]of Object.entries(w)){if(t2.includes(k))return String(v);}
+  const m=t2.match(/\d+/);return m?m[0]:null;
+}
+function xYes(t2){return/\b(oui|yes|confirme|correct|parfait|d.accord|ok|c.est bon|super|je confirme|sí|claro|confirmo|نعم|تأكيد)\b/i.test(t2);}
+function cap(s){return s.replace(/(?:^|\s|-)\S/g,c=>c.toUpperCase());}
+function fmt(d){
+  const DN=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const MN=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  return`${DN[d.getDay()]} ${d.getDate()} ${MN[d.getMonth()]}`;
+}
+function strip(s){return s.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]|[\u{1F300}-\u{1F9FF}]/gu,'').replace(/\*\*(.*?)\*\*/g,'$1');}
+
+// ════════════════════════════════
+// UI — MESSAGES
+// ════════════════════════════════
+function addBotMsg(text){
+  const msgs=document.getElementById('msgs');
+  const d=document.createElement('div');d.className='msg bot';
+  const ti=now();
+  const html=strip(text).replace(/\n/g,'<br>');
+  d.innerHTML=`<div class="av">AI</div><div class="mbody"><div class="bubble">${html}</div><div class="mtime">${ti}</div></div>`;
+  msgs.appendChild(d);
+
+  if(step==='date'){setTimeout(()=>{const cw=document.createElement('div');cw.className='msg bot';cw.id='cal-msg';cw.innerHTML=`<div class="av">AI</div><div class="mbody">${buildCal()}</div>`;msgs.appendChild(cw);msgs.scrollTop=msgs.scrollHeight;},200);}
+  if(step==='heure'){setTimeout(()=>{const tw=document.createElement('div');tw.className='msg bot';tw.id='time-msg';tw.innerHTML=`<div class="av">AI</div><div class="mbody">${buildTime()}</div>`;msgs.appendChild(tw);msgs.scrollTop=msgs.scrollHeight;},200);}
+
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function addUserMsg(text){
+  const msgs=document.getElementById('msgs');
+  const d=document.createElement('div');d.className='msg user';
+  const ti=now();
+  d.innerHTML=`<div class="av">U</div><div class="mbody"><div class="bubble">${text}</div><div class="mtime">${ti}</div></div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+
+function showTyping(){
+  const msgs=document.getElementById('msgs');
+  const d=document.createElement('div');d.className='msg bot';d.id='typing-row';
+  d.innerHTML=`<div class="av">AI</div><div class="mbody"><div class="typing-bub"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function removeTyping(){const e=document.getElementById('typing-row');if(e)e.remove();}
+function now(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+
+// ════════════════════════════════
+// CALENDRIER
+// ════════════════════════════════
+let calY=new Date().getFullYear(), calM=new Date().getMonth();
+
+function buildCal(){
+  const today=new Date();
+  const first=new Date(calY,calM,1).getDay();
+  const days=new Date(calY,calM+1,0).getDate();
+  const MNS=['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
+  const DNS=['Lu','Ma','Me','Je','Ve','Sa','Di'];
+  const off=first===0?6:first-1;
+  let cells='';
+  for(let i=0;i<off;i++)cells+=`<div class="cday empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const dt=new Date(calY,calM,d);
+    const past=dt<new Date(today.getFullYear(),today.getMonth(),today.getDate());
+    const tod=d===today.getDate()&&calM===today.getMonth()&&calY===today.getFullYear();
+    const cls='cday'+(past?' past':'')+(tod?' today':'');
+    cells+=`<button class="${cls}" ${past?'':'onclick="pickDate('+d+','+calM+','+calY+')"'}>${d}</button>`;
+  }
+  return`<div class="cal-wrap"><div class="cal-head"><button class="cal-nav" onclick="navCal(-1)">&#8249;</button><div class="cal-ttl">${MNS[calM]} ${calY}</div><button class="cal-nav" onclick="navCal(1)">&#8250;</button></div><div class="cal-dhead">${DNS.map(n=>`<div class="cal-dn">${n}</div>`).join('')}</div><div class="cal-grid" id="cal-grid">${cells}</div></div>`;
+}
+function navCal(dir){calM+=dir;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}const cm=document.getElementById('cal-msg');if(cm)cm.querySelector('.mbody').innerHTML=buildCal();}
+function pickDate(d,m,y){
+  const MN=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  const DN=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const dt=new Date(y,m,d);
+  const formatted=`${DN[dt.getDay()]} ${d} ${MN[m]}`;
+  document.querySelectorAll('.cday').forEach(b=>b.classList.remove('sel'));
+  if(event&&event.target)event.target.classList.add('sel');
+  setTimeout(()=>{const cm=document.getElementById('cal-msg');if(cm)cm.remove();addUserMsg(formatted);lockInput(true);showTyping();setTimeout(()=>process(formatted),400);},250);
+}
+
+// ════════════════════════════════
+// SÉLECTEUR HEURE
+// ════════════════════════════════
+function buildTime(){
+  const slots=['8h00','8h30','9h00','9h30','10h00','10h30','11h00','11h30','12h00','12h30','13h00','13h30','19h00','19h30','20h00','20h30','21h00','21h30','22h00'];
+  return`<div class="tpick"><div class="tpick-ttl">${t().heure_titre}</div><div class="tpick-grid">${slots.map(h=>`<button class="tslot" onclick="pickTime('${h}')">${h}</button>`).join('')}</div></div>`;
+}
+function pickTime(h){
+  document.querySelectorAll('.tslot').forEach(b=>b.classList.remove('sel'));
+  if(event&&event.target)event.target.classList.add('sel');
+  setTimeout(()=>{const tm=document.getElementById('time-msg');if(tm)tm.remove();addUserMsg(h);lockInput(true);showTyping();setTimeout(()=>process(h),400);},220);
+}
+
+// ════════════════════════════════
+// REGISTRE
+// ════════════════════════════════
+const ETAG={Reservation:'et-r',Commande:'et-c',Avis:'et-a',Annulation:'et-x','Liste attente':'et-w',Modification:'et-x'};
+
+function save(type){
+  const entry={...rdv,id:Date.now(),type,biz:bizName,lang,created:new Date().toLocaleDateString('fr-FR')};
+  registry.push(entry);
+  localStorage.setItem('p_reg5',JSON.stringify(registry));
+  addCard(entry);updateCt();
+  toast(type+' ✓','ok');
+}
+function addCard(r,prepend=true){
+  if(regFilt!=='all'&&r.type!==regFilt)return;
+  const list=document.getElementById('reg-list');
+  const empty=list.querySelector('.reg-empty');if(empty)empty.remove();
+  const tc=ETAG[r.type]||'et-r';
+  let info='';
+  if(r.couverts) info+=`<b>CV:</b> ${r.couverts}<br>`;
+  if(r.date)     info+=`<b>D:</b> ${r.date}<br>`;
+  if(r.heure)    info+=`<b>H:</b> ${r.heure}<br>`;
+  if(r.allergies)info+=`<b>⚠ Allergies:</b> ${r.allergies}<br>`;
+  if(r.plats)    info+=`<b>Cmd:</b> ${r.plats.slice(0,45)}<br>`;
+  if(r.avis)     info+=`<b>Avis:</b> ${r.avis.slice(0,45)}<br>`;
+  if(r.tel)      info+=`<b>Tel:</b> ${r.tel}<br>`;
+  if(r.lang)     info+=`<b>Lang:</b> ${r.lang.toUpperCase()}<br>`;
+  info+=`<b>${r.created}</b>`;
+  // Badge client connu
+  const known = findClient(r.nom||'');
+  const fidelBadge = known && known.data.visites >= 3 ? ` <span style="font-size:9px;background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:3px;font-weight:700">⭐ ${known.data.visites}x</span>` : '';
+  const card=document.createElement('div');
+  card.className='ecard fresh';card.dataset.id=r.id;card.dataset.type=r.type;
+  card.innerHTML=`<div class="etag ${tc}">${r.type}</div><div class="ename">${r.nom||'—'}${fidelBadge}</div><div class="einfo">${info}</div><button class="edel" onclick="delCard(${r.id})">✕</button>`;
+  prepend?list.prepend(card):list.appendChild(card);
+  setTimeout(()=>card.classList.remove('fresh'),2500);
+}
+function delCard(id){
+  registry=registry.filter(r=>r.id!==id);
+  localStorage.setItem('p_reg5',JSON.stringify(registry));
+  const c=document.querySelector(`.ecard[data-id="${id}"]`);if(c)c.remove();
+  if(!document.querySelector('.ecard'))document.getElementById('reg-list').innerHTML=`<div class="reg-empty">${t().reg_empty}</div>`;
+  updateCt();
+}
+function filtReg(type,btn){
+  regFilt=type;
+  document.querySelectorAll('.rf').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const list=document.getElementById('reg-list');list.innerHTML='';
+  const filtered=type==='all'?registry:registry.filter(r=>r.type===type);
+  if(!filtered.length){list.innerHTML=`<div class="reg-empty">${t().reg_empty}</div>`;return;}
+  [...filtered].reverse().forEach(r=>addCard(r,false));
+}
+
+function showClients(btn){
+  document.querySelectorAll('.rf').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const list=document.getElementById('reg-list');list.innerHTML='';
+  const clients=Object.entries(clientDB);
+  if(!clients.length){list.innerHTML=`<div class="reg-empty">Aucun client en memoire</div>`;return;}
+
+  // Trier par nombre de visites
+  clients.sort((a,b)=>(b[1].visites||0)-(a[1].visites||0));
+
+  clients.forEach(([key,c])=>{
+    const card=document.createElement('div');
+    card.className='ecard';
+    let info=`<b>Visites :</b> ${c.visites||1}<br>`;
+    if(c.derniere_date) info+=`<b>Derniere visit. :</b> ${c.derniere_date}<br>`;
+    if(c.couverts_habituels) info+=`<b>Couverts hab. :</b> ${c.couverts_habituels}<br>`;
+    if(c.allergies) info+=`<b>Allergies :</b> ${c.allergies}`;
+    const badge = c.visites >= 5 ? '⭐ Fidele' : c.visites >= 3 ? 'Regulier' : 'Nouveau';
+    card.innerHTML=`<div class="etag et-r">${badge}</div><div class="ename">${c.prenom||key}</div><div class="einfo">${info}</div><button class="edel" onclick="delClient('${key}')">✕</button>`;
+    list.appendChild(card);
+  });
+}
+
+function delClient(key){
+  delete clientDB[key];
+  localStorage.setItem('p_clients',JSON.stringify(clientDB));
+  showClients(document.querySelector('.rf:last-child'));
+}
+function updateCt(){
+  const n=registry.length;
+  document.getElementById('reg-ct').textContent=n;
+  document.getElementById('sb-ct').textContent=n;
+}
+function exportAll(){
+  if(!registry.length){toast('Vide','warn');return;}
+  let txt=`PITCHLY — ${bizName||'Restaurant'}\n${new Date().toLocaleDateString()}\n${'─'.repeat(44)}\n\n`;
+  registry.forEach(r=>{
+    txt+=`[${r.type}] ${r.nom||'—'} [${(r.lang||'').toUpperCase()}]\n`;
+    if(r.couverts)txt+=`Couverts : ${r.couverts}\n`;
+    if(r.date)    txt+=`Date : ${r.date}\n`;
+    if(r.heure)   txt+=`Heure : ${r.heure}\n`;
+    if(r.plats)   txt+=`Commande : ${r.plats}\n`;
+    if(r.avis)    txt+=`Avis : ${r.avis}\n`;
+    if(r.tel)     txt+=`Tel : ${r.tel}\n`;
+    txt+=`Le : ${r.created}\n\n`;
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
+  a.download=`pitchly_${Date.now()}.txt`;a.click();
+  toast('Export ✓','ok');
+}
+
+// ════════════════════════════════
+// TOAST
+// ════════════════════════════════
+function toast(msg,type='ok'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className=`toast ${type} show`;
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+window.onload=()=>{
+  if(registry.length){[...registry].reverse().forEach(r=>addCard(r,false));updateCt();}
+  setTimeout(loadVoices,400);
+  setTimeout(()=>{if(SR)initRecog();},600);
+  applyTranslations();
+};
+</script>
+</body>
+</html>
