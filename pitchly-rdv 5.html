@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitchly — Assistant IA Commerce</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090b;--bg2:#111113;--bg3:#18181b;
+  --border:#27272a;--muted:#52525b;
+  --text:#fafafa;--text2:#a1a1aa;
+  --accent:#f97316;--accent2:#fb923c;
+  --green:#22c55e;--blue:#3b82f6;--red:#ef4444;
+  --sans:'Bricolage Grotesque',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--text);overflow:hidden}
+
+.shell{display:flex;height:100vh}
+
+/* ── SIDEBAR ── */
+.sb{
+  width:238px;flex-shrink:0;background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.sb-brand{
+  padding:16px 16px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.sb-mark{
+  width:34px;height:34px;border-radius:9px;background:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:15px;color:#fff;
+  box-shadow:0 0 16px rgba(249,115,22,.35);flex-shrink:0;
+}
+.sb-name{font-weight:800;font-size:15px;letter-spacing:-.3px}
+.sb-tagline{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px}
+
+/* Langue */
+.sb-lang{padding:10px 12px 8px;border-bottom:1px solid var(--border);display:flex;gap:5px;align-items:center}
+.sb-ll{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-right:2px}
+.lb{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;font-family:var(--sans)}
+.lb.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* Secteur */
+.sb-sector{padding:10px 12px 8px;border-bottom:1px solid var(--border)}
+.sb-sl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block}
+.sector-sel{
+  width:100%;padding:8px 10px;font-size:12px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);outline:none;font-family:var(--sans);
+  transition:border-color .15s;cursor:pointer;
+}
+.sector-sel:focus{border-color:var(--accent)}
+
+/* Modes */
+.sb-nav{padding:8px 10px 6px;flex:1;overflow-y:auto}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-nl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:4px 8px 6px;display:block}
+.nb{
+  width:100%;display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:8px;border:none;
+  background:transparent;color:var(--muted);
+  cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:500;
+  transition:all .15s;text-align:left;margin-bottom:1px;
+}
+.nb:hover{background:var(--bg3);color:var(--text)}
+.nb.on{background:var(--bg3);color:var(--text)}
+.nb.on .nb-bar{background:var(--accent)}
+.nb-ico{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+.nb-lbl{flex:1}
+.nb-bar{width:3px;height:14px;border-radius:2px;background:transparent;transition:all .15s;flex-shrink:0}
+
+/* Config */
+.sb-config{padding:8px 10px 10px;border-top:1px solid var(--border)}
+.sb-cl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;display:block}
+.sb-inp{
+  width:100%;padding:8px 10px;font-size:12px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);outline:none;font-family:var(--sans);
+  transition:border-color .15s;margin-bottom:7px;
+}
+.sb-inp::placeholder{color:var(--muted)}
+.sb-inp:focus{border-color:var(--accent)}
+.btn-launch{
+  width:100%;padding:10px;border-radius:8px;
+  background:var(--accent);border:none;color:#fff;
+  font-family:var(--sans);font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 14px rgba(249,115,22,.3);
+}
+.btn-launch:hover{opacity:.92;transform:translateY(-1px)}
+
+/* Stats */
+.sb-stats{padding:8px 10px 10px;border-top:1px solid var(--border)}
+.sb-stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 11px;display:flex;justify-content:space-between;align-items:center}
+.sb-stat-lbl{font-size:10px;color:var(--muted)}
+.sb-stat-n{font-size:20px;font-weight:800;color:var(--accent);font-family:var(--mono)}
+.btn-exp-sm{width:100%;margin-top:6px;padding:7px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-exp-sm:hover{background:var(--bg3);color:var(--text)}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+
+/* Topbar */
+.topbar{
+  height:50px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;flex-shrink:0;
+}
+.tb-l{display:flex;align-items:center;gap:9px}
+.tb-biz{font-weight:700;font-size:13px}
+.tb-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:rgba(249,115,22,.12);color:var(--accent2);border:1px solid rgba(249,115,22,.2);font-family:var(--mono)}
+.tb-live{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--green);font-weight:600}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:bk 1.5s ease infinite}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-new{font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--sans);transition:all .15s}
+.btn-new:hover{border-color:var(--red);color:var(--red)}
+
+/* Welcome */
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px;text-align:center}
+.welcome-ico{font-size:52px;margin-bottom:4px}
+.welcome h2{font-size:21px;font-weight:800;letter-spacing:-.3px}
+.welcome p{font-size:13px;color:var(--muted);max-width:300px;line-height:1.7}
+.wchips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:4px}
+.wchip{font-size:11px;font-weight:500;padding:4px 11px;border-radius:18px;background:var(--bg2);border:1px solid var(--border);color:var(--muted)}
+
+/* Messages */
+.msgs{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.msgs::-webkit-scrollbar{width:4px}
+.msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.msg{display:flex;gap:9px;animation:mfade .2s ease both}
+@keyframes mfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;align-self:flex-end;margin-bottom:2px}
+.bot .av{background:var(--accent)}
+.user .av{background:var(--blue)}
+.mbody{max-width:75%;display:flex;flex-direction:column;gap:3px}
+.user .mbody{align-items:flex-end}
+.bubble{padding:10px 14px;border-radius:16px;font-size:13.5px;line-height:1.75;display:inline-block}
+.bot .bubble{background:var(--bg2);border:1px solid var(--border);color:var(--text2);border-radius:4px 16px 16px 16px}
+.user .bubble{background:var(--blue);color:#fff;border-radius:16px 4px 16px 16px}
+.mtime{font-size:10px;color:var(--muted);padding:0 4px;font-family:var(--mono)}
+
+/* Typing */
+.typing-bub{background:var(--bg2);border:1px solid var(--border);border-radius:4px 16px 16px 16px;padding:12px 16px;display:flex;gap:4px;align-items:center}
+.typing-bub span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:tdot .9s ease infinite}
+.typing-bub span:nth-child(2){animation-delay:.15s}.typing-bub span:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{transform:scale(.5);opacity:.4}30%{transform:scale(1);opacity:1}}
+
+/* Voice bar */
+.vbar{display:none;align-items:center;gap:7px;padding:5px 18px;background:rgba(249,115,22,.08);border-top:1px solid rgba(249,115,22,.2);font-size:11px;color:var(--accent2);font-weight:600;flex-shrink:0;font-family:var(--mono)}
+.vwave{display:flex;align-items:center;gap:2px;height:13px}
+.vwave span{display:block;width:3px;border-radius:2px;background:var(--accent);animation:vw .7s ease infinite}
+.vwave span:nth-child(1){height:3px}.vwave span:nth-child(2){height:8px;animation-delay:.1s}
+.vwave span:nth-child(3){height:13px;animation-delay:.2s}.vwave span:nth-child(4){height:8px;animation-delay:.3s}
+.vwave span:nth-child(5){height:3px;animation-delay:.4s}
+@keyframes vw{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+
+/* Input */
+.izone{background:var(--bg2);border-top:1px solid var(--border);padding:9px 14px 12px;display:none;flex-shrink:0}
+.back-row{display:flex;justify-content:flex-start;margin-bottom:7px}
+.btn-back{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--sans);transition:all .15s}
+.btn-back:hover{border-color:var(--accent);color:var(--accent2)}
+.btn-back:disabled{opacity:.3;cursor:not-allowed}
+.irow{display:flex;gap:7px;align-items:center}
+.mic-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
+.mic-btn{width:42px;height:42px;border-radius:50%;border:2px solid var(--border);background:var(--bg3);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.mic-btn:hover{border-color:var(--accent)}
+.mic-btn.listening{border-color:var(--red);background:rgba(239,68,68,.1);animation:mring 1.2s ease infinite}
+.mic-btn.speaking{border-color:var(--accent);background:rgba(249,115,22,.1);cursor:default}
+@keyframes mring{0%,100%{box-shadow:0 0 0 3px rgba(239,68,68,.15)}50%{box-shadow:0 0 0 8px rgba(239,68,68,.04)}}
+.mic-lbl{font-size:9px;font-weight:600;color:var(--muted);text-align:center;width:46px;line-height:1.3;font-family:var(--mono)}
+.mic-lbl.listening{color:var(--red)}.mic-lbl.speaking{color:var(--accent2)}
+.tinp{flex:1;padding:10px 13px;font-size:13px;background:var(--bg3);border:1.5px solid var(--border);border-radius:11px;color:var(--text);outline:none;font-family:var(--sans);resize:none;min-height:42px;max-height:90px;line-height:1.5;transition:border-color .15s}
+.tinp:focus{border-color:var(--accent)}
+.tinp::placeholder{color:var(--muted)}
+.tinp:disabled{opacity:.4}
+.sbtn{width:42px;height:42px;border-radius:10px;flex-shrink:0;background:var(--accent);border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;box-shadow:0 4px 12px rgba(249,115,22,.3)}
+.sbtn:hover{opacity:.9;transform:scale(1.05)}
+.sbtn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* Calendrier */
+.cal-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;max-width:285px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.cal-ttl{font-size:13px;font-weight:700}
+.cal-nav{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--text);transition:all .15s}
+.cal-nav:hover{background:var(--bg3)}
+.cal-dhead{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
+.cal-dn{font-size:9px;font-weight:700;color:var(--muted);text-align:center;padding:3px 0;font-family:var(--mono)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cday{aspect-ratio:1;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cday:hover{background:rgba(249,115,22,.15);color:var(--accent2)}
+.cday.today{border:1.5px solid var(--accent);color:var(--accent);font-weight:700}
+.cday.sel{background:var(--accent);color:#fff;font-weight:700}
+.cday.past{color:var(--border);cursor:not-allowed}
+.cday.past:hover{background:transparent;color:var(--border)}
+.cday.empty{cursor:default}
+
+/* Sélecteur heure */
+.tpick{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;max-width:285px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.tpick-ttl{font-size:12px;font-weight:700;margin-bottom:10px}
+.tpick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.tslot{padding:8px 4px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--mono)}
+.tslot:hover{border-color:var(--accent);color:var(--accent2);background:rgba(249,115,22,.08)}
+.tslot.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Registre */
+.reg{width:215px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.reg-head{padding:12px 12px 9px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.reg-ttl{font-size:12px;font-weight:700}
+.reg-ct{font-size:11px;font-weight:700;background:rgba(249,115,22,.12);color:var(--accent2);padding:2px 7px;border-radius:10px;font-family:var(--mono)}
+.reg-filt{display:flex;gap:4px;padding:7px 9px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.rf{font-size:10px;font-weight:600;padding:3px 7px;border-radius:11px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .12s;font-family:var(--mono)}
+.rf:hover{border-color:var(--accent);color:var(--accent2)}
+.rf.on{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:var(--accent2)}
+.reg-list{flex:1;overflow-y:auto;padding:7px}
+.reg-list::-webkit-scrollbar{width:3px}
+.reg-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.reg-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);text-align:center;padding:20px;font-size:11px;line-height:1.6}
+.ecard{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:10px 11px;margin-bottom:6px;animation:mfade .3s ease both;transition:border-color .15s}
+.ecard:hover{border-color:rgba(249,115,22,.3)}
+.ecard.fresh{border-color:var(--accent);background:rgba(249,115,22,.05)}
+.etag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;font-family:var(--mono)}
+.et-r{background:rgba(59,130,246,.15);color:var(--blue)}
+.et-c{background:rgba(34,197,94,.15);color:var(--green)}
+.et-a{background:rgba(249,115,22,.15);color:var(--accent2)}
+.et-x{background:rgba(239,68,68,.15);color:var(--red)}
+.et-w{background:rgba(168,85,247,.15);color:#c084fc}
+.ename{font-size:12px;font-weight:700;margin-bottom:3px}
+.einfo{font-size:10px;color:var(--muted);line-height:1.6;font-family:var(--mono)}
+.einfo b{color:var(--text2)}
+.edel{margin-top:6px;font-size:10px;padding:2px 7px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--sans);transition:all .12s}
+.edel:hover{border-color:var(--red);color:var(--red)}
+.reg-foot{padding:8px 9px;border-top:1px solid var(--border);flex-shrink:0}
+.btn-dl{width:100%;padding:8px;border-radius:7px;background:var(--bg3);color:var(--text);border:1px solid var(--border);font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-dl:hover{background:var(--border)}
+
+/* Toast */
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--bg2);color:var(--text);padding:9px 16px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid var(--border);font-family:var(--mono)}
+.toast.show{opacity:1}
+.toast.ok{background:#15803d;border-color:#166534}
+.toast.warn{background:#92400e;border-color:#b45309}
+.toast.err{background:#991b1b;border-color:#b91c1c}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="sb-mark">P</div>
+    <div>
+      <div class="sb-name">Pitchly</div>
+      <div class="sb-tagline">assistant.ai</div>
+    </div>
+  </div>
+
+  <!-- Langue -->
+  <div class="sb-lang">
+    <span class="sb-ll">Lang</span>
+    <button class="lb on" onclick="setLang('fr',this)">FR</button>
+    <button class="lb" onclick="setLang('en',this)">EN</button>
+    <button class="lb" onclick="setLang('es',this)">ES</button>
+    <button class="lb" onclick="setLang('ar',this)">AR</button>
+  </div>
+
+  <!-- Secteur -->
+  <div class="sb-sector">
+    <span class="sb-sl">Secteur</span>
+    <select class="sector-sel" id="sector-sel" onchange="setSector(this.value)">
+      <option value="restaurant">🍽️ Restaurant</option>
+      <option value="coiffure">💇 Salon de coiffure</option>
+      <option value="garage">🔧 Garage automobile</option>
+      <option value="hotel">🏨 Hôtel</option>
+      <option value="clinique">🏥 Clinique / Cabinet médical</option>
+      <option value="pharmacie">💊 Pharmacie</option>
+      <option value="immo">🏠 Agence immobilière</option>
+      <option value="beaute">💆 Institut de beauté / Spa</option>
+      <option value="dentiste">🦷 Cabinet dentaire</option>
+      <option value="sport">🏋️ Salle de sport</option>
+      <option value="auto_ecole">🚗 Auto-école</option>
+      <option value="boutique">🛍️ Boutique / Commerce</option>
+    </select>
+  </div>
+
+  <!-- Modes -->
+  <div class="sb-nav">
+    <span class="sb-nl" id="lbl-modes">Modes</span>
+    <button class="nb on" id="nb-rdv" onclick="setMode('rdv',this)"><span class="nb-ico">📅</span><span class="nb-lbl" id="lbl-rdv">Réservation / RDV</span><span class="nb-bar"></span></button>
+    <button class="nb" id="nb-cmd" onclick="setMode('commande',this)"><span class="nb-ico">🥡</span><span class="nb-lbl" id="lbl-cmd">Commande / Service</span><span class="nb-bar"></span></button>
+    <button class="nb" id="nb-q" onclick="setMode('questions',this)"><span class="nb-ico">💬</span><span class="nb-lbl" id="lbl-q">Questions clients</span><span class="nb-bar"></span></button>
+    <button class="nb" id="nb-avis" onclick="setMode('avis',this)"><span class="nb-ico">⭐</span><span class="nb-lbl" id="lbl-avis">Avis satisfaction</span><span class="nb-bar"></span></button>
+    <button class="nb" id="nb-ann" onclick="setMode('annulation',this)"><span class="nb-ico">✖</span><span class="nb-lbl" id="lbl-ann">Annulation</span><span class="nb-bar"></span></button>
+    <button class="nb" id="nb-att" onclick="setMode('attente',this)"><span class="nb-ico">⏳</span><span class="nb-lbl" id="lbl-att">Liste attente</span><span class="nb-bar"></span></button>
+  </div>
+
+  <!-- Config -->
+  <div class="sb-config">
+    <span class="sb-cl" id="lbl-comm">Nom du commerce</span>
+    <input class="sb-inp" id="biz-inp" type="text" placeholder="ex : Chez Marco">
+    <button class="btn-launch" id="btn-launch" onclick="launch()">Démarrer l'assistant</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="sb-stats">
+    <div class="sb-stat-box">
+      <div class="sb-stat-lbl" id="lbl-entries">Entrées</div>
+      <div class="sb-stat-n" id="sb-ct">0</div>
+    </div>
+    <button class="btn-exp-sm" onclick="exportAll()">Exporter registre</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar" id="topbar" style="display:none">
+    <div class="tb-l">
+      <div class="tb-biz" id="tb-biz">—</div>
+      <div class="tb-badge" id="tb-badge">—</div>
+      <div class="tb-live"><div class="live-dot"></div><span id="lbl-online">En ligne</span></div>
+    </div>
+    <button class="btn-new" onclick="resetConv()">Nouvelle conversation</button>
+  </div>
+
+  <div class="welcome" id="welcome">
+    <div class="welcome-ico" id="w-ico">🏪</div>
+    <h2 id="w-title">Assistant IA pour votre commerce</h2>
+    <p id="w-desc">Choisissez votre secteur, entrez le nom de votre commerce et démarrez. Le client parle librement, le robot gère tout.</p>
+    <div class="wchips">
+      <div class="wchip">Réservations</div>
+      <div class="wchip">Questions</div>
+      <div class="wchip">Avis clients</div>
+      <div class="wchip">Annulations</div>
+      <div class="wchip">Liste attente</div>
+    </div>
+  </div>
+
+  <div class="msgs" id="msgs" style="display:none"></div>
+
+  <div class="vbar" id="vbar">
+    <div class="vwave"><span></span><span></span><span></span><span></span><span></span></div>
+    <span id="lbl-speaking">L'assistant parle...</span>
+  </div>
+
+  <div class="izone" id="izone">
+    <div class="back-row">
+      <button class="btn-back" id="btn-back" onclick="goBack()" disabled>← <span id="lbl-back">Revenir en arrière</span></button>
+    </div>
+    <div class="irow">
+      <div class="mic-wrap">
+        <button class="mic-btn" id="mic-btn" onclick="toggleMic()">🎤</button>
+        <div class="mic-lbl" id="mic-lbl">Parler</div>
+      </div>
+      <textarea class="tinp" id="tinp" rows="1" onkeydown="onKey(event)" oninput="resize(this)" disabled></textarea>
+      <button class="sbtn" id="sbtn" onclick="send()" disabled>➤</button>
+    </div>
+  </div>
+</main>
+
+<!-- REGISTRE -->
+<aside class="reg">
+  <div class="reg-head">
+    <div class="reg-ttl" id="lbl-reg">Registre</div>
+    <div class="reg-ct" id="reg-ct">0</div>
+  </div>
+  <div class="reg-filt">
+    <button class="rf on" onclick="filtReg('all',this)">Tout</button>
+    <button class="rf" onclick="filtReg('RDV',this)">RDV</button>
+    <button class="rf" onclick="filtReg('Commande',this)">Cmd</button>
+    <button class="rf" onclick="showClients(this)">Clients</button>
+  </div>
+  <div class="reg-list" id="reg-list">
+    <div class="reg-empty">Les entrées apparaîtront ici</div>
+  </div>
+  <div class="reg-foot">
+    <button class="btn-dl" onclick="exportAll()">Télécharger (.txt)</button>
+  </div>
+</aside>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ════════ SECTEURS ════════
+const SECTORS = {
+  restaurant:  { ico:'🍽️', rdv:'Réservation table',    cmd:'Commande emporter', faq_horaires:'Nous sommes ouverts du mardi au dimanche, déjeuner 12h-14h30, dîner 19h-22h30.' },
+  coiffure:    { ico:'💇', rdv:'Rendez-vous coiffure',  cmd:'Prestation rapide',  faq_horaires:'Nous sommes ouverts du lundi au samedi, de 9h à 19h.' },
+  garage:      { ico:'🔧', rdv:'Rendez-vous entretien', cmd:'Devis rapide',        faq_horaires:'Nous sommes ouverts du lundi au vendredi, de 8h à 18h.' },
+  hotel:       { ico:'🏨', rdv:'Réservation chambre',   cmd:'Service en chambre',  faq_horaires:'La réception est ouverte 24h/24.' },
+  clinique:    { ico:'🏥', rdv:'Rendez-vous médical',   cmd:'Consultation urgente',faq_horaires:'Nous recevons sur rendez-vous du lundi au vendredi, de 8h à 18h.' },
+  pharmacie:   { ico:'💊', rdv:'Rendez-vous conseil',   cmd:'Commande ordonnance', faq_horaires:'Nous sommes ouverts du lundi au samedi de 9h à 20h.' },
+  immo:        { ico:'🏠', rdv:'Rendez-vous visite',    cmd:'Estimation rapide',   faq_horaires:'Notre agence est ouverte du lundi au samedi de 9h à 18h.' },
+  beaute:      { ico:'💆', rdv:'Rendez-vous soin',      cmd:'Prestation express',  faq_horaires:'Nous vous accueillons du mardi au samedi, de 10h à 19h.' },
+  dentiste:    { ico:'🦷', rdv:'Rendez-vous dentaire',  cmd:'Urgence dentaire',    faq_horaires:'Le cabinet est ouvert du lundi au vendredi, de 9h à 18h.' },
+  sport:       { ico:'🏋️', rdv:'Séance entraînement',  cmd:'Cours collectif',     faq_horaires:'La salle est ouverte 7j/7 de 7h à 22h.' },
+  auto_ecole:  { ico:'🚗', rdv:'Leçon de conduite',     cmd:'Code / Examen',       faq_horaires:'Nous sommes disponibles du lundi au samedi, de 8h à 18h.' },
+  boutique:    { ico:'🛍️', rdv:'Rendez-vous conseil',   cmd:'Réservation article',  faq_horaires:'Nous sommes ouverts du lundi au samedi, de 10h à 19h.' },
+};
+
+// ════════ STATE ════════
+let lang     = 'fr';
+let sector   = 'restaurant';
+let mode     = 'rdv';
+let bizName  = '';
+let step     = 'idle';
+let rdv      = {};
+let convHist = [];
+let registry = JSON.parse(localStorage.getItem('p_reg6')||'[]');
+let clientDB = JSON.parse(localStorage.getItem('p_cli6')||'{}');
+let regFilt  = 'all';
+let botBusy  = false;
+
+// MAX couverts/créneaux par heure
+const MAX_PAX = 20;
+const ALL_SLOTS = ['8h00','8h30','9h00','9h30','10h00','10h30','11h00','11h30','12h00','12h30','13h00','13h30','14h00','14h30','15h00','15h30','16h00','16h30','17h00','17h30','18h00','18h30','19h00','19h30','20h00','20h30','21h00','21h30','22h00'];
+
+function getAvailableSlots(date, nb) {
+  const n = parseInt(nb)||1;
+  return ALL_SLOTS.filter(h => {
+    const used = registry.filter(r=>r.date===date&&r.heure===h).reduce((s,r)=>s+(parseInt(r.couverts)||1),0);
+    return used + n <= MAX_PAX;
+  });
+}
+
+function findClient(nom) {
+  const k = nom.toLowerCase().trim();
+  if (clientDB[k]) return { key:k, data:clientDB[k] };
+  for (const ck of Object.keys(clientDB)) { if(ck.includes(k)||k.includes(ck)) return {key:ck,data:clientDB[ck]}; }
+  return null;
+}
+function saveClient(nom, data) {
+  const k = nom.toLowerCase().trim();
+  const ex = clientDB[k]||{visites:0,prenom:nom};
+  clientDB[k] = {...ex,...data,visites:(ex.visites||0)+1,derniere:new Date().toLocaleDateString('fr-FR')};
+  localStorage.setItem('p_cli6',JSON.stringify(clientDB));
+}
+
+// ════════ TRADUCTIONS ════════
+const T = {
+  fr:{
+    parler:'Parler',ecoute:'Écoute...',parle:'Parle...',
+    g_rdv:  b=>`Bonjour et bienvenue chez ${b}. Je suis votre assistant pour les rendez-vous et réservations. Quel est votre nom ?`,
+    g_cmd:  b=>`Bonjour chez ${b}. Je suis votre assistant. Quel est votre nom ?`,
+    g_q:    b=>`Bonjour chez ${b}. Comment puis-je vous aider ?`,
+    g_avis: b=>`Bonjour. Merci d'avoir choisi ${b}. Avez-vous passé un bon moment ?`,
+    g_ann:  b=>`Bonjour chez ${b}. Vous souhaitez modifier ou annuler un rendez-vous. Quel est votre nom ?`,
+    g_att:  b=>`Bonjour chez ${b}. Nous n'avons pas de disponibilité pour le moment. Souhaitez-vous être sur liste d'attente ? Quel est votre nom ?`,
+    q_nb:   n=>`Bonjour ${n}. Pour combien de personnes ?`,
+    q_date: ()=>`Pour quelle date ?`,
+    q_heure:d=>`Le ${d}. À quelle heure ?`,
+    q_allergi:()=>`Avant de confirmer, y a-t-il des allergies ou des besoins particuliers ? (Dites non si aucun)`,
+    q_confirm:r=>`${r}\n\nConfirmez-vous ?`,
+    q_cmd:  n=>`Bonjour ${n}. Que souhaitez-vous ?`,
+    q_retrait:()=>`À quelle heure souhaitez-vous récupérer ou être servi ?`,
+    q_nb_att:n=>`Bonjour ${n}. Pour combien de personnes ?`,
+    q_tel:  ()=>`Votre numéro de téléphone pour vous prévenir quand une place se libère ?`,
+    q_ann_date:n=>`Bonjour ${n}. Quelle est la date du rendez-vous à modifier ?`,
+    q_ann_act: d=>`Pour le rendez-vous du ${d}. Annuler ou modifier ?`,
+    q_ann_mod: ()=>`Quelle modification souhaitez-vous apporter ?`,
+    c_rdv:  (b,n,d,h,cv)=>`Parfait. Rendez-vous confirmé chez ${b}, le ${d} à ${h}${cv?` pour ${cv} personne${parseInt(cv)>1?'s':''}`:'' }. À bientôt ${n}.`,
+    c_cmd:  (n,h)=>`Commande confirmée ${n}. Prête à ${h}. À tout à l'heure.`,
+    c_ann:  (n,d,b)=>`Le rendez-vous du ${d} est annulé ${n}. À bientôt chez ${b}.`,
+    c_mod:  (m,n)=>`Modification enregistrée : ${m}. À bientôt ${n}.`,
+    c_att:  (n,cv,tel)=>`${n}, vous êtes sur liste d'attente${cv?` pour ${cv} personne${parseInt(cv)>1?'s':''}`:'' }. Nous vous appelons au ${tel}.`,
+    c_avis: n=>`Merci pour votre retour ${n}. Nous en tiendrons compte.`,
+    not_understood:`Je n'ai pas bien compris. Pouvez-vous reformuler ?`,
+    modify:`Pas de problème. Que souhaitez-vous modifier ?`,
+    goback:`Pouvez-vous répondre à nouveau à la question précédente ?`,
+    bye:    b=>`Merci et à bientôt chez ${b}.`,
+    heure_titre:'Choisissez une heure',
+    slot_full:(h,alts)=>`Je suis désolé, le créneau de ${h} est complet. Je vous propose : ${alts}. Laquelle vous convient ?`,
+    known_client:(n,vis,cv)=>`Bonjour ${n}, ravi de vous revoir ! C'est votre ${vis+1}ème visite.${cv?` Vous venez habituellement à ${cv}, même chose aujourd'hui ?`:' Pour combien de personnes ?'}`,
+  },
+  en:{
+    parler:'Speak',ecoute:'Listening...',parle:'Speaking...',
+    g_rdv:  b=>`Hello and welcome to ${b}. I'm your assistant for appointments. What's your name?`,
+    g_cmd:  b=>`Hello at ${b}. I'm your assistant. What's your name?`,
+    g_q:    b=>`Hello at ${b}. How can I help you?`,
+    g_avis: b=>`Hello. Thank you for choosing ${b}. Did you have a good experience?`,
+    g_ann:  b=>`Hello at ${b}. You'd like to modify or cancel an appointment. What's your name?`,
+    g_att:  b=>`Hello at ${b}. No availability right now. Would you like to be on the waiting list? What's your name?`,
+    q_nb:   n=>`Hello ${n}. For how many people?`,
+    q_date: ()=>`What date would you like?`,
+    q_heure:d=>`On ${d}. At what time?`,
+    q_allergi:()=>`Before confirming, any allergies or special requirements? (Say no if none)`,
+    q_confirm:r=>`${r}\n\nDo you confirm?`,
+    q_cmd:  n=>`Hello ${n}. What would you like?`,
+    q_retrait:()=>`At what time would you like to pick up or be served?`,
+    q_nb_att:n=>`Hello ${n}. For how many people?`,
+    q_tel:  ()=>`Your phone number so we can reach you when a spot opens?`,
+    q_ann_date:n=>`Hello ${n}. What is the date of the appointment to modify?`,
+    q_ann_act: d=>`For the appointment on ${d}. Cancel or modify?`,
+    q_ann_mod: ()=>`What modification would you like?`,
+    c_rdv:  (b,n,d,h,cv)=>`Appointment confirmed at ${b} on ${d} at ${h}${cv?` for ${cv} person${parseInt(cv)>1?'s':''}`:'' }. See you ${n}.`,
+    c_cmd:  (n,h)=>`Order confirmed ${n}. Ready at ${h}. See you soon.`,
+    c_ann:  (n,d,b)=>`Appointment on ${d} cancelled ${n}. See you at ${b}.`,
+    c_mod:  (m,n)=>`Modification saved: ${m}. See you ${n}.`,
+    c_att:  (n,cv,tel)=>`${n}, you're on the waiting list${cv?` for ${cv}`:'' }. We'll call at ${tel}.`,
+    c_avis: n=>`Thank you for your feedback ${n}. We'll take it into account.`,
+    not_understood:`I didn't quite understand. Could you rephrase?`,
+    modify:`No problem. What would you like to change?`,
+    goback:`Could you answer the previous question again?`,
+    bye:    b=>`Thank you and see you soon at ${b}.`,
+    heure_titre:'Choose a time',
+    slot_full:(h,alts)=>`Sorry, the ${h} slot is full. I can offer: ${alts}. Which works?`,
+    known_client:(n,vis,cv)=>`Welcome back ${n}! This is your ${vis+1}${vis===1?'nd':vis===2?'rd':'th'} visit.${cv?` You usually come for ${cv}, same today?`:' For how many?'}`,
+  },
+  es:{
+    parler:'Hablar',ecoute:'Escuchando...',parle:'Hablando...',
+    g_rdv:  b=>`Hola y bienvenido a ${b}. Soy su asistente para citas. ¿Cómo se llama?`,
+    g_cmd:  b=>`Hola en ${b}. Soy su asistente. ¿Cómo se llama?`,
+    g_q:    b=>`Hola en ${b}. ¿En qué puedo ayudarle?`,
+    g_avis: b=>`Hola. Gracias por elegir ${b}. ¿Ha tenido una buena experiencia?`,
+    g_ann:  b=>`Hola en ${b}. Desea modificar o cancelar una cita. ¿Cómo se llama?`,
+    g_att:  b=>`Hola en ${b}. No hay disponibilidad ahora. ¿Le gustaría estar en lista de espera? ¿Cómo se llama?`,
+    q_nb:   n=>`Hola ${n}. ¿Para cuántas personas?`,
+    q_date: ()=>`¿Para qué fecha?`,
+    q_heure:d=>`El ${d}. ¿A qué hora?`,
+    q_allergi:()=>`Antes de confirmar, ¿hay alergias o necesidades especiales? (Diga no si ninguna)`,
+    q_confirm:r=>`${r}\n\n¿Confirma?`,
+    q_cmd:  n=>`Hola ${n}. ¿Qué desea?`,
+    q_retrait:()=>`¿A qué hora desea recoger o ser atendido?`,
+    q_nb_att:n=>`Hola ${n}. ¿Para cuántas personas?`,
+    q_tel:  ()=>`¿Su teléfono para avisarle cuando haya disponibilidad?`,
+    q_ann_date:n=>`Hola ${n}. ¿Cuál es la fecha de la cita a modificar?`,
+    q_ann_act: d=>`Para la cita del ${d}. ¿Cancelar o modificar?`,
+    q_ann_mod: ()=>`¿Qué modificación desea?`,
+    c_rdv:  (b,n,d,h,cv)=>`Cita confirmada en ${b} el ${d} a las ${h}${cv?` para ${cv} persona${parseInt(cv)>1?'s':''}`:'' }. Hasta pronto ${n}.`,
+    c_cmd:  (n,h)=>`Pedido confirmado ${n}. Listo a las ${h}. Hasta pronto.`,
+    c_ann:  (n,d,b)=>`La cita del ${d} cancelada ${n}. Hasta pronto en ${b}.`,
+    c_mod:  (m,n)=>`Modificación guardada: ${m}. Hasta pronto ${n}.`,
+    c_att:  (n,cv,tel)=>`${n}, está en lista de espera${cv?` para ${cv}`:'' }. Le llamaremos al ${tel}.`,
+    c_avis: n=>`Gracias por su opinión ${n}. Lo tendremos en cuenta.`,
+    not_understood:`No he entendido bien. ¿Podría reformular?`,
+    modify:`Sin problema. ¿Qué desea cambiar?`,
+    goback:`¿Podría responder de nuevo a la pregunta anterior?`,
+    bye:    b=>`Gracias y hasta pronto en ${b}.`,
+    heure_titre:'Elija una hora',
+    slot_full:(h,alts)=>`Lo siento, el turno de las ${h} está completo. Puedo ofrecer: ${alts}. ¿Cuál le viene bien?`,
+    known_client:(n,vis,cv)=>`¡Bienvenido de nuevo ${n}! Es su ${vis+1}ª visita.${cv?` Suele venir para ${cv}, ¿igual hoy?`:' ¿Para cuántas personas?'}`,
+  },
+  ar:{
+    parler:'تحدث',ecoute:'جاري الاستماع...',parle:'يتحدث...',
+    g_rdv:  b=>`مرحباً بك في ${b}. أنا مساعدك للحجوزات. ما اسمك؟`,
+    g_cmd:  b=>`مرحباً في ${b}. أنا مساعدك. ما اسمك؟`,
+    g_q:    b=>`مرحباً في ${b}. كيف يمكنني مساعدتك؟`,
+    g_avis: b=>`مرحباً. شكراً لاختيارك ${b}. هل كانت تجربتك جيدة؟`,
+    g_ann:  b=>`مرحباً في ${b}. تريد تعديل أو إلغاء موعد. ما اسمك؟`,
+    g_att:  b=>`مرحباً في ${b}. لا توجد مواعيد متاحة حالياً. هل تريد أن تكون على قائمة الانتظار؟ ما اسمك؟`,
+    q_nb:   n=>`مرحباً ${n}. لكم شخص؟`,
+    q_date: ()=>`في أي تاريخ؟`,
+    q_heure:d=>`في ${d}. في أي ساعة؟`,
+    q_allergi:()=>`قبل التأكيد، هل هناك حساسيات أو احتياجات خاصة؟ (قل لا إن لم يكن)`,
+    q_confirm:r=>`${r}\n\nهل تؤكد؟`,
+    q_cmd:  n=>`مرحباً ${n}. ماذا تريد؟`,
+    q_retrait:()=>`في أي ساعة تريد الاستلام أو الخدمة؟`,
+    q_nb_att:n=>`مرحباً ${n}. لكم شخص؟`,
+    q_tel:  ()=>`رقم هاتفك لإعلامك عند توفر موعد؟`,
+    q_ann_date:n=>`مرحباً ${n}. ما تاريخ الموعد المراد تعديله؟`,
+    q_ann_act: d=>`موعد ${d}. إلغاء أم تعديل؟`,
+    q_ann_mod: ()=>`ما التعديل المطلوب؟`,
+    c_rdv:  (b,n,d,h,cv)=>`تم تأكيد الموعد في ${b} يوم ${d} الساعة ${h}${cv?` لـ ${cv} شخص`:'' }. إلى اللقاء ${n}.`,
+    c_cmd:  (n,h)=>`تم تأكيد الطلب ${n}. جاهز الساعة ${h}. إلى اللقاء.`,
+    c_ann:  (n,d,b)=>`تم إلغاء موعد ${d} يا ${n}. إلى اللقاء في ${b}.`,
+    c_mod:  (m,n)=>`تم حفظ التعديل: ${m}. إلى اللقاء ${n}.`,
+    c_att:  (n,cv,tel)=>`${n}، أنت على قائمة الانتظار${cv?` لـ ${cv}`:'' }. سنتصل بك على ${tel}.`,
+    c_avis: n=>`شكراً على تعليقك ${n}. سنأخذه بعين الاعتبار.`,
+    not_understood:`لم أفهم جيداً. هل يمكنك إعادة الصياغة؟`,
+    modify:`لا مشكلة. ماذا تريد تغيير؟`,
+    goback:`هل يمكنك الإجابة على السؤال السابق مرة أخرى؟`,
+    bye:    b=>`شكراً وإلى اللقاء في ${b}.`,
+    heure_titre:'اختر وقتاً',
+    slot_full:(h,alts)=>`آسف، وقت ${h} ممتلئ. يمكنني اقتراح: ${alts}. أيها يناسبك؟`,
+    known_client:(n,vis,cv)=>`مرحباً بعودتك ${n}! هذه زيارتك رقم ${vis+1}.${cv?` عادةً تأتي لـ ${cv}، نفس الشيء؟`:' لكم شخص؟'}`,
+  }
+};
+
+const t = () => T[lang]||T.fr;
+
+// ════════ VOIX ════════
+const synth = window.speechSynthesis;
+let voices = {};
+function loadVoices() {
+  const vs = synth.getVoices(); if(!vs.length) return;
+  const pick = tests => { for(const f of tests){const v=vs.find(f);if(v)return v;} return null; };
+  voices.fr = pick([v=>v.lang==='fr-FR'&&/thomas/i.test(v.name),v=>v.lang==='fr-FR'&&/amelie/i.test(v.name),v=>v.lang==='fr-FR'&&/google/i.test(v.name),v=>v.lang==='fr-FR',v=>v.lang.startsWith('fr')]);
+  voices.en = pick([v=>v.lang==='en-GB'&&/google/i.test(v.name),v=>v.lang==='en-US'&&/google/i.test(v.name),v=>v.lang.startsWith('en')]);
+  voices.es = pick([v=>v.lang==='es-ES'&&/google/i.test(v.name),v=>v.lang.startsWith('es')]);
+  voices.ar = pick([v=>v.lang==='ar-SA',v=>v.lang.startsWith('ar')]);
+}
+loadVoices();
+if(synth.onvoiceschanged!==undefined) synth.onvoiceschanged=loadVoices;
+
+function speak(text,cb){
+  const clean=text.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]|[\u{1F300}-\u{1F9FF}]/gu,'').replace(/\*\*(.*?)\*\*/g,'$1').replace(/<[^>]+>/g,'').replace(/\n+/g,'. ').replace(/\s{2,}/g,' ').trim();
+  synth.cancel(); botBusy=true; setMic('speaking'); document.getElementById('vbar').style.display='flex';
+  const voice=voices[lang];
+  if(!voice){fin();if(cb)cb();return;}
+  const u=new SpeechSynthesisUtterance(clean);
+  u.voice=voice;u.lang={fr:'fr-FR',en:'en-GB',es:'es-ES',ar:'ar-SA'}[lang]||'fr-FR';
+  u.rate=0.9;u.pitch=1.0;u.volume=1;
+  u.onend=u.onerror=()=>{fin();if(cb)cb();};
+  synth.speak(u);
+  function fin(){botBusy=false;document.getElementById('vbar').style.display='none';setMic('idle');}
+}
+
+// ════════ MICRO ════════
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let recog=null,micOn=false;
+function initRecog(){
+  if(!SR){setMic('nosupport');return false;}
+  recog=new SR();recog.lang={fr:'fr-FR',en:'en-GB',es:'es-ES',ar:'ar-SA'}[lang]||'fr-FR';
+  recog.interimResults=false;recog.continuous=false;recog.maxAlternatives=1;
+  recog.onresult=e=>{const tx=e.results[0][0].transcript.trim();stopMic();if(tx){document.getElementById('tinp').value=tx;send();}};
+  recog.onspeechend=()=>stopMic();
+  recog.onerror=e=>{stopMic();if(e.error==='not-allowed')toast('Autorisez le micro','err');};
+  recog.onend=()=>{if(micOn)stopMic();};
+  return true;
+}
+function toggleMic(){if(botBusy){toast(t().parle,'warn');return;}if(step==='idle'){toast('Démarrez d\'abord','warn');return;}micOn?stopMic():startMic();}
+function startMic(){if(!recog&&!initRecog())return;recog.lang={fr:'fr-FR',en:'en-GB',es:'es-ES',ar:'ar-SA'}[lang]||'fr-FR';micOn=true;setMic('listening');try{recog.start();}catch(e){stopMic();}}
+function stopMic(){micOn=false;setMic('idle');try{recog.stop();}catch(e){}}
+function setMic(s){
+  const btn=document.getElementById('mic-btn'),lbl=document.getElementById('mic-lbl'),T2=t();
+  if(s==='listening'){btn.className='mic-btn listening';btn.innerHTML='⏹';lbl.textContent=T2.ecoute;lbl.className='mic-lbl listening';}
+  else if(s==='speaking'){btn.className='mic-btn speaking';btn.innerHTML='🔊';lbl.textContent=T2.parle;lbl.className='mic-lbl speaking';}
+  else if(s==='nosupport'){btn.className='mic-btn';btn.innerHTML='🚫';lbl.textContent='N/A';btn.disabled=true;}
+  else{btn.className='mic-btn';btn.innerHTML='🎤';lbl.textContent=T2.parler;lbl.className='mic-lbl';}
+}
+
+// ════════ SECTEUR & LANGUE ════════
+function setSector(s){
+  sector=s;
+  const sd=SECTORS[s]||SECTORS.restaurant;
+  document.getElementById('w-ico').textContent=sd.ico;
+  document.getElementById('lbl-rdv').textContent=sd.rdv;
+  document.getElementById('lbl-cmd').textContent=sd.cmd;
+}
+function setLang(l,btn){
+  lang=l;
+  document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  setTimeout(loadVoices,300);
+}
+function setMode(m,btn){
+  mode=m;
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ════════ SESSION ════════
+function launch(){
+  bizName=document.getElementById('biz-inp').value.trim()||(lang==='fr'?'votre commerce':lang==='en'?'your business':'su comercio');
+  step='start';rdv={};convHist=[];
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('topbar').style.display='flex';
+  document.getElementById('msgs').style.display='flex';
+  document.getElementById('izone').style.display='block';
+  document.getElementById('msgs').innerHTML='';
+  document.getElementById('tb-biz').textContent=bizName;
+  document.getElementById('tb-badge').textContent=SECTORS[sector]?.ico+' '+sector;
+  lockInput(true);setMic('idle');
+  if(!recog)setTimeout(initRecog,300);
+  const g=greeting();pushHist();addBotMsg(g);speak(g,()=>lockInput(false));
+}
+function resetConv(){
+  synth.cancel();stopMic();step='start';rdv={};convHist=[];
+  document.getElementById('msgs').innerHTML='';
+  lockInput(true);const g=greeting();pushHist();addBotMsg(g);speak(g,()=>lockInput(false));
+}
+function greeting(){
+  const gMap={rdv:'g_rdv',commande:'g_cmd',questions:'g_q',avis:'g_avis',annulation:'g_ann',attente:'g_att'};
+  step={rdv:'nom',commande:'nom_cmd',questions:'q',avis:'avis_q',annulation:'ann_nom',attente:'att_nom'}[mode]||'nom';
+  return t()[gMap[mode]](bizName);
+}
+
+// ════════ RETOUR ARRIÈRE ════════
+function pushHist(){convHist.push({step,rdv:JSON.parse(JSON.stringify(rdv))});document.getElementById('btn-back').disabled=convHist.length<=1;}
+function goBack(){
+  if(convHist.length<=1)return;convHist.pop();
+  const prev=convHist[convHist.length-1];step=prev.step;rdv=JSON.parse(JSON.stringify(prev.rdv));
+  document.getElementById('btn-back').disabled=convHist.length<=1;
+  const msgs=document.getElementById('msgs');let rem=2;while(rem>0&&msgs.lastChild){msgs.removeChild(msgs.lastChild);rem--;}
+  ['cal-msg','time-msg'].forEach(id=>{const e=document.getElementById(id);if(e)e.remove();});
+  const q=t().goback;lockInput(true);addBotMsg(q);speak(q,()=>lockInput(false));
+}
+
+// ════════ INPUT ════════
+function lockInput(on){document.getElementById('tinp').disabled=on;document.getElementById('sbtn').disabled=on;if(!on)document.getElementById('tinp').focus();}
+function send(){const inp=document.getElementById('tinp');const txt=inp.value.trim();if(!txt)return;inp.value='';inp.style.height='';addUserMsg(txt);lockInput(true);showTyping();setTimeout(()=>process(txt),420+Math.random()*130);}
+function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
+function resize(el){el.style.height='';el.style.height=Math.min(el.scrollHeight,92)+'px';}
+
+// ════════ LOGIQUE CONVERSATION ════════
+function process(input){
+  removeTyping();const txt=input.toLowerCase().trim();const T2=t();let res='';pushHist();
+
+  // ── RDV / RÉSERVATION ──
+  if(mode==='rdv'){
+    if(step==='nom'){
+      rdv.nom=xName(input);
+      const known=findClient(rdv.nom);
+      if(known){
+        rdv.clientConnu=true;rdv.allergies=known.data.allergies||null;
+        const cv=known.data.couverts,vis=known.data.visites||1;
+        res=T2.known_client(rdv.nom,vis,cv);
+        step=cv?'confirm_nb':'nb';
+        if(cv)rdv.couverts_suggestion=cv;
+      } else {
+        rdv.clientConnu=false;res=T2.q_nb(rdv.nom);step='nb';
+      }
+    } else if(step==='confirm_nb'){
+      const n=xNum(txt);
+      if(xYes(txt)||(!n&&!/non|no|change/i.test(txt))){rdv.couverts=rdv.couverts_suggestion;}
+      else if(n){rdv.couverts=n;}
+      else{res=T2.q_nb(rdv.nom);step='nb';}
+      if(!res){res=T2.q_date();step='date';}
+    } else if(step==='nb'){
+      rdv.couverts=xNum(txt)||input;res=T2.q_date();step='date';
+    } else if(step==='date'){
+      rdv.date=input;res=T2.q_heure(rdv.date);step='heure';
+    } else if(step==='heure'){
+      rdv.heure=input;
+      const avail=getAvailableSlots(rdv.date,rdv.couverts||1);
+      if(!avail.includes(rdv.heure)&&avail.length>0){
+        const alts=avail.slice(0,3).join(', ');
+        res=T2.slot_full(rdv.heure,alts);step='heure';
+      } else if(avail.length===0){
+        res=lang==='fr'?`Désolé, aucune disponibilité le ${rdv.date}. Souhaitez-vous une autre date ?`:`Sorry, no availability on ${rdv.date}. Would you like another date?`;
+        step='date';
+      } else if(!rdv.allergies){
+        res=T2.q_allergi();step='allergi';
+      } else {
+        res=T2.q_confirm(recap(T2));step='confirm';
+      }
+    } else if(step==='allergi'){
+      rdv.allergies=/non|no|aucun|none|ninguno|لا/i.test(txt)?null:input;
+      res=T2.q_confirm(recap(T2));step='confirm';
+    } else if(step==='confirm'){
+      if(xYes(txt)){
+        saveClient(rdv.nom,{couverts:rdv.couverts,allergies:rdv.allergies||null,prenom:rdv.nom});
+        save('RDV');res=T2.c_rdv(bizName,rdv.nom,rdv.date,rdv.heure,rdv.couverts);
+        if(rdv.allergies)res+=lang==='fr'?` Note allergies : ${rdv.allergies}.`:` Allergy note: ${rdv.allergies}.`;
+        step='done';
+      } else {res=T2.modify;step='nb';}
+    } else if(step==='done'){res=handleDone(txt,T2);}
+  }
+
+  // ── COMMANDE / SERVICE ──
+  else if(mode==='commande'){
+    if(step==='nom_cmd'){rdv.nom=xName(input);res=T2.q_cmd(rdv.nom);step='cmd';}
+    else if(step==='cmd'){rdv.cmd=input;res=T2.q_retrait();step='retrait';}
+    else if(step==='retrait'){
+      rdv.heure=xTime(input)||input;
+      res=T2.q_confirm(`${lang==='fr'?'Nom':'Name'}: ${rdv.nom}\n${lang==='fr'?'Demande':'Request'}: ${rdv.cmd}\n${lang==='fr'?'Heure':'Time'}: ${rdv.heure}`);
+      step='confirm_cmd';
+    } else if(step==='confirm_cmd'){
+      if(xYes(txt)){save('Commande');res=T2.c_cmd(rdv.nom,rdv.heure);step='done';}
+      else{res=T2.modify;step='cmd';}
+    } else if(step==='done'){res=handleDone(txt,T2);}
+  }
+
+  // ── QUESTIONS ──
+  else if(mode==='questions'){res=faq(txt,T2);}
+
+  // ── AVIS ──
+  else if(mode==='avis'){
+    if(step==='avis_q'){
+      rdv.nom=xName(input);
+      if(/oui|bien|super|excellent|parfait|top|yes|good|great|bueno|excelente|نعم|جيد/i.test(txt)){
+        res=lang==='fr'?`Merci ${rdv.nom} ! Nous sommes ravis. Pourriez-vous laisser un avis sur Google ?`:`Thank you ${rdv.nom}! Could you leave a Google review?`;
+        step='avis_det';
+      } else {
+        res=lang==='fr'?`Nous sommes désolés ${rdv.nom}. Pouvez-vous nous dire ce qui n'a pas été ?`:`We're sorry ${rdv.nom}. What went wrong?`;
+        step='avis_neg';
+      }
+    } else if(step==='avis_det'||step==='avis_neg'){rdv.avis=input;save('Avis');res=T2.c_avis(rdv.nom);step='done';}
+    else if(step==='done'){res=handleDone(txt,T2);}
+  }
+
+  // ── ANNULATION ──
+  else if(mode==='annulation'){
+    if(step==='ann_nom'){rdv.nom=xName(input);res=T2.q_ann_date(rdv.nom);step='ann_date';}
+    else if(step==='ann_date'){rdv.date=xDate(input);res=T2.q_ann_act(rdv.date);step='ann_action';}
+    else if(step==='ann_action'){
+      if(/annuler|cancel|إلغاء|cancelar/i.test(txt)){save('Annulation');res=T2.c_ann(rdv.nom,rdv.date,bizName);step='done';}
+      else{res=T2.q_ann_mod();step='ann_modif';}
+    } else if(step==='ann_modif'){rdv.modif=input;save('Modification');res=T2.c_mod(input,rdv.nom);step='done';}
+    else if(step==='done'){res=handleDone(txt,T2);}
+  }
+
+  // ── LISTE ATTENTE ──
+  else if(mode==='attente'){
+    if(step==='att_nom'){rdv.nom=xName(input);res=T2.q_nb_att(rdv.nom);step='att_nb';}
+    else if(step==='att_nb'){rdv.couverts=xNum(txt)||input;res=T2.q_tel();step='att_tel';}
+    else if(step==='att_tel'){rdv.tel=input;save('Attente');res=T2.c_att(rdv.nom,rdv.couverts,rdv.tel);step='done';}
+    else if(step==='done'){res=handleDone(txt,T2);}
+  }
+
+  if(!res)res=T2.not_understood;
+  addBotMsg(res);speak(res,()=>lockInput(step!=='idle'));
+}
+
+function handleDone(txt,T2){
+  if(/oui|nouveau|autre|yes|new|another|sí|nuevo|نعم|جديد/i.test(txt)){rdv={};convHist=[];const g=greeting();pushHist();return g;}
+  step='idle';return T2.bye(bizName);
+}
+
+function faq(txt,T2){
+  const sd=SECTORS[sector]||SECTORS.restaurant;
+  if(/heure|ouvert|horaire|ferm|hour|open|abierto|ساعات|مفتوح/i.test(txt)) return sd.faq_horaires;
+  if(/adresse|ou|address|where|dirección|عنوان/i.test(txt)) return lang==='fr'?`Retrouvez ${bizName} au [renseignez votre adresse].`:`Find ${bizName} at [your address].`;
+  if(/tarif|prix|cost|precio|سعر/i.test(txt)) return lang==='fr'?`Contactez-nous directement pour nos tarifs.`:`Please contact us directly for pricing.`;
+  if(/parking|voiture|car|سيارة/i.test(txt)) return lang==='fr'?`Un parking est disponible à proximité.`:`Parking is available nearby.`;
+  return T2.not_understood+' '+( lang==='fr'?'Essayez : horaires, adresse, tarifs.':'Try: hours, address, pricing.');
+}
+
+function recap(T2){
+  let r=`${lang==='fr'?'Nom':'Name'}: ${rdv.nom}`;
+  if(rdv.couverts)r+=`\n${lang==='fr'?'Personnes':'People'}: ${rdv.couverts}`;
+  if(rdv.date)r+=`\n${lang==='fr'?'Date':'Date'}: ${rdv.date}`;
+  if(rdv.heure)r+=`\n${lang==='fr'?'Heure':'Time'}: ${rdv.heure}`;
+  if(rdv.allergies)r+=`\n${lang==='fr'?'Allergies':'Allergies'}: ${rdv.allergies}`;
+  r+=`\n${lang==='fr'?'Commerce':'Business'}: ${bizName}`;
+  return r;
+}
+
+// ════════ EXTRACTEURS ════════
+function xName(text){
+  const ps=[/je m.appelle ([a-zàâäéèêëîïôöùûüç\s\-]+)/i,/my name is ([a-z\s\-]+)/i,/me llamo ([a-záéíóú\s\-]+)/i,/اسمي ([^\s]+)/i];
+  for(const p of ps){const m=text.match(p);if(m)return cap(m[1].trim().split(/\s+/).slice(0,3).join(' '));}
+  return cap(text.trim().split(/\s+/).slice(0,3).join(' '));
+}
+function xDate(text){
+  const t2=text.toLowerCase(),now=new Date();
+  const DN=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  if(/aujourd.hui|today|hoy|اليوم/i.test(t2))return fmt(now);
+  if(/demain|tomorrow|mañana|غداً/i.test(t2)){const d=new Date(now);d.setDate(d.getDate()+1);return fmt(d);}
+  if(/semaine prochaine|next week/i.test(t2)){const d=new Date(now);d.setDate(d.getDate()+7);return fmt(d);}
+  if(/week.?end/i.test(t2)){const d=new Date(now);d.setDate(d.getDate()+(6-d.getDay()));return fmt(d);}
+  for(let i=0;i<DN.length;i++){if(t2.includes(DN[i])){const d=new Date(now);const di=(i-d.getDay()+7)%7||7;d.setDate(d.getDate()+di);return fmt(d);}}
+  return cap(text.trim());
+}
+function xTime(text){
+  const t2=text.toLowerCase().replace(/\s/g,'');
+  for(const p of[/(\d{1,2})h(\d{2})/,/(\d{1,2})h/,/(\d{1,2}):(\d{2})/]){const m=t2.match(p);if(m)return`${m[1]}h${m[2]||'00'}`;}
+  if(/matin|morning/i.test(text))return'9h00';
+  if(/midi|noon/i.test(text))return'12h00';
+  if(/soir|evening/i.test(text))return'19h00';
+  return text.trim();
+}
+function xNum(t2){
+  const w={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,one:1,two:2,three:3,four:4,five:5,seven:7,eight:8,nine:9,ten:10};
+  for(const[k,v]of Object.entries(w)){if(t2.includes(k))return String(v);}
+  const m=t2.match(/\d+/);return m?m[0]:null;
+}
+function xYes(t2){return/\b(oui|yes|confirme|correct|parfait|d.accord|ok|c.est bon|super|je confirme|sí|claro|confirmo|نعم|تأكيد)\b/i.test(t2);}
+function cap(s){return s.replace(/(?:^|\s|-)\S/g,c=>c.toUpperCase());}
+function fmt(d){
+  const DN=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const MN=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  return`${DN[d.getDay()]} ${d.getDate()} ${MN[d.getMonth()]}`;
+}
+function strip(s){return s.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]|[\u{1F300}-\u{1F9FF}]/gu,'').replace(/\*\*(.*?)\*\*/g,'$1');}
+
+// ════════ UI MESSAGES ════════
+function addBotMsg(text){
+  const msgs=document.getElementById('msgs');
+  const d=document.createElement('div');d.className='msg bot';
+  const ti=now();const html=strip(text).replace(/\n/g,'<br>');
+  d.innerHTML=`<div class="av">AI</div><div class="mbody"><div class="bubble">${html}</div><div class="mtime">${ti}</div></div>`;
+  msgs.appendChild(d);
+  if(step==='date'){setTimeout(()=>{const cw=document.createElement('div');cw.className='msg bot';cw.id='cal-msg';cw.innerHTML=`<div class="av">AI</div><div class="mbody">${buildCal()}</div>`;msgs.appendChild(cw);msgs.scrollTop=msgs.scrollHeight;},200);}
+  if(step==='heure'){setTimeout(()=>{const tw=document.createElement('div');tw.className='msg bot';tw.id='time-msg';tw.innerHTML=`<div class="av">AI</div><div class="mbody">${buildTime()}</div>`;msgs.appendChild(tw);msgs.scrollTop=msgs.scrollHeight;},200);}
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function addUserMsg(text){
+  const msgs=document.getElementById('msgs');
+  const d=document.createElement('div');d.className='msg user';
+  d.innerHTML=`<div class="av">U</div><div class="mbody"><div class="bubble">${text}</div><div class="mtime">${now()}</div></div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function showTyping(){
+  const msgs=document.getElementById('msgs');
+  const d=document.createElement('div');d.className='msg bot';d.id='typing-row';
+  d.innerHTML=`<div class="av">AI</div><div class="mbody"><div class="typing-bub"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function removeTyping(){const e=document.getElementById('typing-row');if(e)e.remove();}
+function now(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+
+// ════════ CALENDRIER ════════
+let calY=new Date().getFullYear(),calM=new Date().getMonth();
+function buildCal(){
+  const today=new Date();const first=new Date(calY,calM,1).getDay();const days=new Date(calY,calM+1,0).getDate();
+  const MNS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const DNS=['Lu','Ma','Me','Je','Ve','Sa','Di'];const off=first===0?6:first-1;
+  let cells='';for(let i=0;i<off;i++)cells+=`<div class="cday empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const dt=new Date(calY,calM,d);const past=dt<new Date(today.getFullYear(),today.getMonth(),today.getDate());
+    const tod=d===today.getDate()&&calM===today.getMonth()&&calY===today.getFullYear();
+    const cls='cday'+(past?' past':'')+(tod?' today':'');
+    cells+=`<button class="${cls}" ${past?'':'onclick="pickDate('+d+','+calM+','+calY+')"'}>${d}</button>`;
+  }
+  return`<div class="cal-wrap"><div class="cal-head"><button class="cal-nav" onclick="navCal(-1)">‹</button><div class="cal-ttl">${MNS[calM]} ${calY}</div><button class="cal-nav" onclick="navCal(1)">›</button></div><div class="cal-dhead">${DNS.map(n=>`<div class="cal-dn">${n}</div>`).join('')}</div><div class="cal-grid">${cells}</div></div>`;
+}
+function navCal(dir){calM+=dir;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}const cm=document.getElementById('cal-msg');if(cm)cm.querySelector('.mbody').innerHTML=buildCal();}
+function pickDate(d,m,y){
+  const MN=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  const DN=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const dt=new Date(y,m,d);const formatted=`${DN[dt.getDay()]} ${d} ${MN[m]}`;
+  document.querySelectorAll('.cday').forEach(b=>b.classList.remove('sel'));
+  if(event&&event.target)event.target.classList.add('sel');
+  setTimeout(()=>{const cm=document.getElementById('cal-msg');if(cm)cm.remove();addUserMsg(formatted);lockInput(true);showTyping();setTimeout(()=>process(formatted),400);},250);
+}
+
+// ════════ SÉLECTEUR HEURE ════════
+function buildTime(){
+  const slots=['8h00','8h30','9h00','9h30','10h00','10h30','11h00','11h30','12h00','12h30','13h00','13h30','14h00','14h30','15h00','15h30','16h00','16h30','17h00','17h30','18h00','18h30','19h00','19h30','20h00','20h30','21h00','21h30','22h00'];
+  return`<div class="tpick"><div class="tpick-ttl">${t().heure_titre}</div><div class="tpick-grid">${slots.map(h=>`<button class="tslot" onclick="pickTime('${h}')">${h}</button>`).join('')}</div></div>`;
+}
+function pickTime(h){
+  document.querySelectorAll('.tslot').forEach(b=>b.classList.remove('sel'));
+  if(event&&event.target)event.target.classList.add('sel');
+  setTimeout(()=>{const tm=document.getElementById('time-msg');if(tm)tm.remove();addUserMsg(h);lockInput(true);showTyping();setTimeout(()=>process(h),400);},220);
+}
+
+// ════════ REGISTRE ════════
+const ETAG={RDV:'et-r',Commande:'et-c',Avis:'et-a',Annulation:'et-x',Modification:'et-x',Attente:'et-w'};
+function save(type){
+  const entry={...rdv,id:Date.now(),type,biz:bizName,sector,lang,created:new Date().toLocaleDateString('fr-FR')};
+  registry.push(entry);localStorage.setItem('p_reg6',JSON.stringify(registry));
+  addCard(entry);updateCt();toast(type+' ✓','ok');
+}
+function addCard(r,prepend=true){
+  if(regFilt!=='all'&&r.type!==regFilt)return;
+  const list=document.getElementById('reg-list');const empty=list.querySelector('.reg-empty');if(empty)empty.remove();
+  const tc=ETAG[r.type]||'et-r';let info='';
+  if(r.couverts)info+=`<b>N:</b> ${r.couverts}<br>`;
+  if(r.date)    info+=`<b>D:</b> ${r.date}<br>`;
+  if(r.heure)   info+=`<b>H:</b> ${r.heure}<br>`;
+  if(r.allergies)info+=`<b>⚠:</b> ${r.allergies}<br>`;
+  if(r.cmd)     info+=`<b>Cmd:</b> ${r.cmd.slice(0,40)}<br>`;
+  if(r.avis)    info+=`<b>Avis:</b> ${r.avis.slice(0,40)}<br>`;
+  if(r.tel)     info+=`<b>Tel:</b> ${r.tel}<br>`;
+  info+=`<b>${r.created}</b>`;
+  const known=findClient(r.nom||'');
+  const fidel=known&&known.data.visites>=3?` <span style="font-size:9px;background:rgba(249,115,22,.15);color:var(--accent2);padding:1px 5px;border-radius:3px;font-weight:700">⭐${known.data.visites}x</span>`:'';
+  const card=document.createElement('div');card.className='ecard fresh';card.dataset.id=r.id;card.dataset.type=r.type;
+  card.innerHTML=`<div class="etag ${tc}">${r.type}</div><div class="ename">${r.nom||'—'}${fidel}</div><div class="einfo">${info}</div><button class="edel" onclick="delCard(${r.id})">✕</button>`;
+  prepend?list.prepend(card):list.appendChild(card);
+  setTimeout(()=>card.classList.remove('fresh'),2500);
+}
+function delCard(id){
+  registry=registry.filter(r=>r.id!==id);localStorage.setItem('p_reg6',JSON.stringify(registry));
+  const c=document.querySelector(`.ecard[data-id="${id}"]`);if(c)c.remove();
+  if(!document.querySelector('.ecard'))document.getElementById('reg-list').innerHTML=`<div class="reg-empty">Les entrées apparaîtront ici</div>`;
+  updateCt();
+}
+function filtReg(type,btn){
+  regFilt=type;document.querySelectorAll('.rf').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const list=document.getElementById('reg-list');list.innerHTML='';
+  const filtered=type==='all'?registry:registry.filter(r=>r.type===type);
+  if(!filtered.length){list.innerHTML=`<div class="reg-empty">Aucune entrée pour ce filtre</div>`;return;}
+  [...filtered].reverse().forEach(r=>addCard(r,false));
+}
+function showClients(btn){
+  document.querySelectorAll('.rf').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const list=document.getElementById('reg-list');list.innerHTML='';
+  const clients=Object.entries(clientDB).sort((a,b)=>(b[1].visites||0)-(a[1].visites||0));
+  if(!clients.length){list.innerHTML=`<div class="reg-empty">Aucun client en mémoire</div>`;return;}
+  clients.forEach(([k,c])=>{
+    const card=document.createElement('div');card.className='ecard';
+    let info=`<b>Visites:</b> ${c.visites||1}<br>`;
+    if(c.derniere)info+=`<b>Dernière:</b> ${c.derniere}<br>`;
+    if(c.couverts)info+=`<b>Hab.:</b> ${c.couverts}<br>`;
+    if(c.allergies)info+=`<b>⚠:</b> ${c.allergies}`;
+    const badge=c.visites>=5?'⭐ Fidèle':c.visites>=3?'Régulier':'Nouveau';
+    card.innerHTML=`<div class="etag et-r">${badge}</div><div class="ename">${c.prenom||k}</div><div class="einfo">${info}</div><button class="edel" onclick="delClient('${k}')">✕</button>`;
+    list.appendChild(card);
+  });
+}
+function delClient(key){delete clientDB[key];localStorage.setItem('p_cli6',JSON.stringify(clientDB));showClients(document.querySelector('.rf:last-child'));}
+function updateCt(){const n=registry.length;document.getElementById('reg-ct').textContent=n;document.getElementById('sb-ct').textContent=n;}
+function exportAll(){
+  if(!registry.length){toast('Rien à exporter','warn');return;}
+  let txt=`PITCHLY — ${bizName||'Commerce'}\n${new Date().toLocaleDateString()}\n${'─'.repeat(44)}\n\n`;
+  registry.forEach(r=>{
+    txt+=`[${r.type}] ${r.nom||'—'}\n`;
+    if(r.couverts)txt+=`Personnes : ${r.couverts}\n`;
+    if(r.date)    txt+=`Date : ${r.date}\n`;
+    if(r.heure)   txt+=`Heure : ${r.heure}\n`;
+    if(r.cmd)     txt+=`Demande : ${r.cmd}\n`;
+    if(r.avis)    txt+=`Avis : ${r.avis}\n`;
+    if(r.tel)     txt+=`Tel : ${r.tel}\n`;
+    txt+=`Le : ${r.created}\n\n`;
+  });
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
+  a.download=`pitchly_${Date.now()}.txt`;a.click();toast('Exporté ✓','ok');
+}
+function toast(msg,type='ok'){const el=document.getElementById('toast');el.textContent=msg;el.className=`toast ${type} show`;setTimeout(()=>el.classList.remove('show'),2500);}
+
+window.onload=()=>{
+  if(registry.length){[...registry].reverse().forEach(r=>addCard(r,false));updateCt();}
+  setTimeout(loadVoices,400);setTimeout(()=>{if(SR)initRecog();},600);
+};
+</script>
+</body>
+</html>

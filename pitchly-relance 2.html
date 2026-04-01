@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitchly Relance — Faites revenir vos clients</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,700;0,900;1,300;1,500;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:     #0e0d0b;
+  --paper:   #f5f0e8;
+  --cream:   #ede8dc;
+  --warm:    #d4c9b0;
+  --muted:   #8a8070;
+  --text:    #2a2520;
+  --text2:   #6b6358;
+  --accent:  #c8502a;
+  --accent2: #e06b42;
+  --gold:    #c4993a;
+  --green:   #3a7d44;
+  --blue:    #2a5fa8;
+  --border:  #d8d0c0;
+  --serif:   'Fraunces', serif;
+  --sans:    'DM Sans', sans-serif;
+  --mono:    'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; font-family: var(--sans); background: var(--paper); color: var(--text); }
+
+/* ── GRAIN TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: .6;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 20px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: var(--paper);
+  position: relative; z-index: 10;
+}
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-mark {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-weight: 700; font-size: 18px; color: #fff;
+  box-shadow: 3px 3px 0 rgba(200,80,42,.3);
+}
+.logo-name { font-family: var(--serif); font-weight: 700; font-size: 18px; color: var(--ink); }
+.logo-tag  { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.back-link {
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  text-decoration: none; display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 7px; border: 1px solid var(--border);
+  transition: all .15s;
+}
+.back-link:hover { background: var(--cream); color: var(--text); }
+
+/* ── HERO SECTION ── */
+.hero {
+  padding: 60px 32px 40px;
+  max-width: 900px; margin: 0 auto;
+  text-align: center; position: relative; z-index: 1;
+}
+.hero-label {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 600; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  padding: 5px 14px; border-radius: 20px;
+  background: rgba(200,80,42,.08); border: 1px solid rgba(200,80,42,.2);
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: var(--serif); font-weight: 700;
+  font-size: clamp(36px, 5vw, 60px); line-height: 1.1;
+  letter-spacing: -1.5px; color: var(--ink); margin-bottom: 16px;
+}
+.hero h1 em { font-style: italic; color: var(--accent); }
+.hero p {
+  font-size: 16px; color: var(--text2); line-height: 1.75;
+  max-width: 520px; margin: 0 auto 40px;
+}
+
+/* ── STATS BAND ── */
+.stats-band {
+  display: flex; gap: 0; border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; margin: 0 auto 48px;
+  max-width: 640px; background: var(--cream);
+}
+.stat-item {
+  flex: 1; padding: 20px 16px; text-align: center;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-n { font-family: var(--serif); font-size: 32px; font-weight: 700; color: var(--accent); letter-spacing: -1px; }
+.stat-l { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+/* ── MAIN LAYOUT ── */
+.app {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 24px 80px;
+  display: grid; grid-template-columns: 380px 1fr;
+  gap: 24px; align-items: start;
+  position: relative; z-index: 1;
+}
+
+/* ── FORMULAIRE ── */
+.form-panel {
+  background: var(--cream); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px; position: sticky; top: 24px;
+}
+.form-title {
+  font-family: var(--serif); font-size: 18px; font-weight: 700;
+  margin-bottom: 20px; color: var(--ink);
+}
+
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 11px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .8px; margin-bottom: 5px;
+  font-family: var(--mono);
+}
+.field input, .field select, .field textarea {
+  width: 100%; padding: 10px 12px; font-size: 13px;
+  background: var(--paper); border: 1.5px solid var(--border);
+  border-radius: 9px; color: var(--text); outline: none;
+  font-family: var(--sans); transition: border-color .15s; resize: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--accent);
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--warm); }
+.field textarea { min-height: 70px; }
+
+/* Sélecteur secteur avec icônes */
+.sector-btns { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.sb-btn {
+  padding: 8px 6px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: var(--paper); cursor: pointer; text-align: center; transition: all .15s;
+  font-family: var(--sans);
+}
+.sb-btn:hover { border-color: var(--accent); background: rgba(200,80,42,.05); }
+.sb-btn.on { border-color: var(--accent); background: rgba(200,80,42,.08); }
+.sb-btn .sb-ico { font-size: 18px; margin-bottom: 3px; display: block; }
+.sb-btn .sb-lbl { font-size: 10px; font-weight: 600; color: var(--muted); }
+.sb-btn.on .sb-lbl { color: var(--accent); }
+
+/* Raisons de revenir */
+.reasons-grid { display: flex; flex-direction: column; gap: 6px; }
+.reason-btn {
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 12px; border-radius: 9px; border: 1.5px solid var(--border);
+  background: var(--paper); cursor: pointer; transition: all .15s;
+  font-family: var(--sans); text-align: left;
+}
+.reason-btn:hover { border-color: var(--accent); background: rgba(200,80,42,.04); }
+.reason-btn.on { border-color: var(--accent); background: rgba(200,80,42,.07); }
+.reason-ico { font-size: 16px; flex-shrink: 0; }
+.reason-text { font-size: 12px; font-weight: 500; color: var(--text2); line-height: 1.4; }
+.reason-btn.on .reason-text { color: var(--accent); }
+
+/* Délai */
+.delay-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.delay-btn {
+  padding: 6px 12px; border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--paper); font-size: 12px; font-weight: 600; color: var(--muted);
+  cursor: pointer; transition: all .15s; font-family: var(--sans);
+}
+.delay-btn:hover { border-color: var(--accent); color: var(--accent); }
+.delay-btn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.btn-generate {
+  width: 100%; padding: 13px; border-radius: 11px;
+  background: var(--accent); color: #fff; border: none;
+  font-family: var(--serif); font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .2s; margin-top: 6px;
+  box-shadow: 3px 3px 0 rgba(200,80,42,.25);
+  letter-spacing: -.3px;
+}
+.btn-generate:hover { background: #b5421f; transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(200,80,42,.3); }
+.btn-generate:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(200,80,42,.2); }
+
+/* ── RÉSULTATS ── */
+.results-panel { display: flex; flex-direction: column; gap: 16px; }
+
+.empty-state {
+  background: var(--cream); border: 1.5px dashed var(--border); border-radius: 16px;
+  padding: 60px 32px; text-align: center;
+}
+.empty-ico { font-size: 48px; margin-bottom: 14px; opacity: .5; }
+.empty-title { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
+.empty-desc { font-size: 13px; color: var(--warm); line-height: 1.6; }
+
+.results-label {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1px; font-family: var(--mono);
+  margin-bottom: 4px;
+}
+
+/* ── CARTE MESSAGE ── */
+.msg-card {
+  background: #fff; border: 1.5px solid var(--border); border-radius: 16px;
+  overflow: hidden; transition: all .2s; animation: slideIn .35s ease both;
+}
+@keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.msg-card:hover { border-color: var(--accent); box-shadow: 0 6px 24px rgba(200,80,42,.1); }
+
+.msg-card-header {
+  padding: 14px 18px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.msg-canal {
+  display: flex; align-items: center; gap: 7px;
+}
+.canal-ico {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.canal-sms     { background: #e8f4fd; }
+.canal-whatsapp{ background: #e8f8ee; }
+.canal-email   { background: #fdf4e8; }
+.canal-insta   { background: #fde8f4; }
+.canal-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.canal-sub  { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+
+.msg-tone-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+  text-transform: uppercase; letter-spacing: .5px; font-family: var(--mono);
+}
+.tone-warm   { background: #fef3c7; color: #92400e; }
+.tone-humor  { background: #ede9fe; color: #5b21b6; }
+.tone-direct { background: #dbeafe; color: #1e40af; }
+.tone-vip    { background: #fce7f3; color: #9d174d; }
+
+/* Message preview */
+.msg-preview {
+  padding: 18px 20px;
+  font-size: 14px; line-height: 1.8; color: var(--text);
+  white-space: pre-wrap; font-family: var(--sans);
+  position: relative;
+}
+.msg-preview::before {
+  content: '"';
+  font-family: var(--serif); font-size: 60px; color: var(--border);
+  position: absolute; top: 4px; left: 12px; line-height: 1;
+  pointer-events: none;
+}
+.msg-highlight {
+  background: rgba(200,80,42,.1); border-radius: 4px;
+  padding: 1px 3px; color: var(--accent); font-weight: 600;
+}
+
+/* Métriques */
+.msg-metrics {
+  padding: 10px 18px; background: var(--cream);
+  display: flex; gap: 16px; border-top: 1px solid var(--border);
+}
+.metric { display: flex; align-items: center; gap: 5px; }
+.metric-ico { font-size: 12px; }
+.metric-val { font-size: 11px; font-weight: 700; color: var(--text); }
+.metric-lbl { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+
+/* Actions */
+.msg-actions {
+  padding: 12px 18px; display: flex; gap: 8px;
+  border-top: 1px solid var(--border);
+}
+.btn-copy-msg {
+  flex: 1; padding: 8px; border-radius: 8px;
+  border: 1.5px solid var(--border); background: var(--paper);
+  font-family: var(--sans); font-size: 12px; font-weight: 600;
+  color: var(--text2); cursor: pointer; transition: all .15s;
+}
+.btn-copy-msg:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,80,42,.04); }
+.btn-copy-msg.copied { background: var(--green); border-color: var(--green); color: #fff; }
+.btn-fav {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid var(--border); background: var(--paper);
+  cursor: pointer; font-size: 16px; transition: all .15s; flex-shrink: 0;
+}
+.btn-fav:hover { background: #fef3c7; border-color: var(--gold); }
+.btn-fav.faved { background: #fef3c7; border-color: var(--gold); }
+
+/* Prévisualisation SMS/WhatsApp */
+.phone-preview {
+  background: var(--cream); border: 1px solid var(--border); border-radius: 16px;
+  padding: 20px; margin-top: 16px;
+}
+.phone-preview-title { font-family: var(--serif); font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--ink); }
+.phone-mockup {
+  background: #1c1c1e; border-radius: 20px; padding: 20px 16px;
+  max-width: 300px; margin: 0 auto;
+}
+.phone-time { font-size: 11px; color: rgba(255,255,255,.4); text-align: center; margin-bottom: 12px; font-family: var(--mono); }
+.phone-sender { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.6); margin-bottom: 6px; }
+.phone-bubble {
+  background: #2c2c2e; border-radius: 16px 16px 16px 4px;
+  padding: 10px 14px; font-size: 13px; color: rgba(255,255,255,.9);
+  line-height: 1.6; white-space: pre-wrap;
+}
+.phone-bubble.whatsapp { background: #005c4b; }
+
+/* Toast */
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 18px; border-radius: 9px; font-size: 12px; font-weight: 600; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,.2); font-family: var(--mono); }
+.toast.show { opacity: 1; }
+.toast.ok { background: var(--green); }
+
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+  .form-panel { position: static; }
+  .stats-band { flex-direction: column; }
+  .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .stat-item:last-child { border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="pitchly-home.html" class="logo">
+    <div class="logo-mark">P</div>
+    <div>
+      <div class="logo-name">Pitchly</div>
+      <div class="logo-tag">relance.clients</div>
+    </div>
+  </a>
+  <a href="pitchly-home.html" class="back-link">← Retour aux outils</a>
+</header>
+
+<section class="hero">
+  <div class="hero-label">✦ Nouveau dans Pitchly</div>
+  <h1>Faites revenir vos clients<br><em>sans effort</em></h1>
+  <p>Pitchly génère des messages de relance originaux, personnalisés et humains. Pas un SMS générique — un vrai message qui donne envie de revenir.</p>
+
+  <div class="stats-band">
+    <div class="stat-item"><div class="stat-n">34%</div><div class="stat-l">de clients reviennent après<br>une bonne relance</div></div>
+    <div class="stat-item"><div class="stat-n">8×</div><div class="stat-l">moins cher que trouver<br>un nouveau client</div></div>
+    <div class="stat-item"><div class="stat-n">30s</div><div class="stat-l">pour générer un message<br>parfait avec Pitchly</div></div>
+  </div>
+</section>
+
+<div class="app">
+
+  <!-- FORMULAIRE -->
+  <div class="form-panel">
+    <div class="form-title">Configurez votre relance</div>
+
+    <!-- Secteur -->
+    <div class="field">
+      <label>Votre secteur</label>
+      <div class="sector-btns">
+        <button class="sb-btn on" id="sec-restaurant" onclick="setSec('restaurant',this)"><span class="sb-ico">🍽️</span><span class="sb-lbl">Restaurant</span></button>
+        <button class="sb-btn" id="sec-coiffure" onclick="setSec('coiffure',this)"><span class="sb-ico">💇</span><span class="sb-lbl">Coiffure</span></button>
+        <button class="sb-btn" id="sec-garage" onclick="setSec('garage',this)"><span class="sb-ico">🔧</span><span class="sb-lbl">Garage</span></button>
+        <button class="sb-btn" id="sec-hotel" onclick="setSec('hotel',this)"><span class="sb-ico">🏨</span><span class="sb-lbl">Hôtel</span></button>
+        <button class="sb-btn" id="sec-beaute" onclick="setSec('beaute',this)"><span class="sb-ico">💆</span><span class="sb-lbl">Beauté</span></button>
+        <button class="sb-btn" id="sec-sport" onclick="setSec('sport',this)"><span class="sb-ico">🏋️</span><span class="sb-lbl">Sport</span></button>
+      </div>
+    </div>
+
+    <!-- Infos commerce -->
+    <div class="field">
+      <label>Nom de votre commerce</label>
+      <input type="text" id="biz-name" placeholder="ex : Chez Marco, Studio Élise...">
+    </div>
+
+    <div class="field">
+      <label>Prénom du client</label>
+      <input type="text" id="client-name" placeholder="ex : Sophie, Karim, Marie...">
+    </div>
+
+    <!-- Délai d'absence -->
+    <div class="field">
+      <label>Absent(e) depuis</label>
+      <div class="delay-btns">
+        <button class="delay-btn" onclick="setDelay('3 semaines',this)">3 sem.</button>
+        <button class="delay-btn on" onclick="setDelay('1 mois',this)">1 mois</button>
+        <button class="delay-btn" onclick="setDelay('2 mois',this)">2 mois</button>
+        <button class="delay-btn" onclick="setDelay('3 mois',this)">3 mois</button>
+        <button class="delay-btn" onclick="setDelay('6 mois',this)">6 mois</button>
+      </div>
+    </div>
+
+    <!-- Raison de revenir -->
+    <div class="field">
+      <label>Pourquoi revenir maintenant ?</label>
+      <div class="reasons-grid" id="reasons-grid">
+        <!-- généré dynamiquement selon le secteur -->
+      </div>
+    </div>
+
+    <!-- Offre spéciale -->
+    <div class="field">
+      <label>Offre à proposer (optionnel)</label>
+      <input type="text" id="offer" placeholder="ex : -15% sur votre prochain passage, café offert...">
+    </div>
+
+    <button class="btn-generate" onclick="generate()">
+      ✦ Générer les messages
+    </button>
+  </div>
+
+  <!-- RÉSULTATS -->
+  <div class="results-panel" id="results">
+    <div class="empty-state">
+      <div class="empty-ico">✉️</div>
+      <div class="empty-title">Vos messages apparaîtront ici</div>
+      <div class="empty-desc">Configurez votre relance à gauche et cliquez sur "Générer". Pitchly créera 4 messages originaux adaptés à votre commerce et à votre client.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ════════ CONFIG SECTEURS ════════
+const SECTORS = {
+  restaurant: {
+    ico: '🍽️',
+    reasons: [
+      { ico:'🍝', text:'Nouveau plat / menu de saison', key:'nouveau_plat' },
+      { ico:'🎉', text:'Événement ou soirée spéciale', key:'event' },
+      { ico:'👨‍🍳', text:'Le chef a changé la carte', key:'carte' },
+      { ico:'☀️', text:'La terrasse est ouverte', key:'terrasse' },
+      { ico:'🎁', text:'Offre anniversaire / fidélité', key:'anniversaire' },
+      { ico:'💝', text:'Juste pour dire qu\'on pense à eux', key:'pensee' },
+    ],
+    contexts: {
+      nouveau_plat: ['Notre nouveau menu vient de sortir', 'La carte a changé avec les saisons', 'De nouveaux plats vous attendent'],
+      event: ['On organise une soirée spéciale', 'Un événement exceptionnel arrive', 'On fête quelque chose de spécial'],
+      carte: ['Le chef a tout repensé la carte', 'Nouvelle carte, nouveaux plaisirs', 'On a fait peau neuve côté cuisine'],
+      terrasse: ['La terrasse est enfin ouverte', 'Le soleil est là, la terrasse aussi', 'On profite du beau temps en terrasse'],
+      anniversaire: ['C\'est bientôt votre anniversaire', 'On veut vous gâter', 'Votre fidélité mérite une récompense'],
+      pensee: ['On pensait à vous aujourd\'hui', 'Vous nous manquez', 'Ça fait un moment qu\'on ne vous a pas vu'],
+    }
+  },
+  coiffure: {
+    ico: '💇',
+    reasons: [
+      { ico:'✂️', text:'Votre coupe a besoin d\'entretien', key:'entretien' },
+      { ico:'🌈', text:'Nouvelle couleur / tendance', key:'couleur' },
+      { ico:'🎁', text:'Offre fidélité client', key:'fidelite' },
+      { ico:'🌸', text:'Nouvelle saison, nouveau look', key:'saison' },
+      { ico:'⭐', text:'Nouveau soin ou traitement', key:'soin' },
+      { ico:'💝', text:'On pense à vous', key:'pensee' },
+    ],
+    contexts: {
+      entretien: ['Votre coupe commence à repousser', 'Il est temps de rafraîchir votre style', 'Une petite mise en forme s\'impose'],
+      couleur: ['De nouvelles tendances couleurs sont arrivées', 'On a les nouvelles techniques de coloration', 'La saison appelle une nouvelle couleur'],
+      fidelite: ['Votre fidélité nous tient à cœur', 'On veut vous remercier de nous faire confiance', 'Vous méritez un petit cadeau'],
+      saison: ['La nouvelle saison appelle un nouveau look', 'C\'est le moment de changer de style', 'On vous prépare le look de la saison'],
+      soin: ['On a de nouveaux soins capillaires', 'Un traitement parfait pour vos cheveux', 'Votre chevelure mérite du soin'],
+      pensee: ['On pensait à vous aujourd\'hui', 'Vous nous manquez au salon', 'Votre dernière visite nous a fait plaisir'],
+    }
+  },
+  garage: {
+    ico: '🔧',
+    reasons: [
+      { ico:'🔧', text:'Révision ou entretien à prévoir', key:'revision' },
+      { ico:'❄️', text:'Changement de pneus de saison', key:'pneus' },
+      { ico:'🔋', text:'Contrôle batterie / fluides', key:'controle' },
+      { ico:'🎁', text:'Offre fidélité client', key:'fidelite' },
+      { ico:'⚠️', text:'Contrôle technique à venir', key:'ct' },
+      { ico:'💝', text:'On pense à vous', key:'pensee' },
+    ],
+    contexts: {
+      revision: ['La révision de votre véhicule approche', 'Il est temps pour un entretien', 'Votre voiture a besoin d\'un check-up'],
+      pneus: ['La saison des pneus est arrivée', 'Il est temps de changer vos pneus', 'Pensez à vos pneus avant l\'hiver'],
+      controle: ['Un petit contrôle s\'impose', 'Votre batterie mérite une vérification', 'On fait le tour de votre véhicule'],
+      fidelite: ['Votre confiance nous tient à cœur', 'On veut vous remercier', 'Vous méritez un geste commercial'],
+      ct: ['Le contrôle technique approche', 'On peut vous préparer pour le contrôle', 'Anticipez votre contrôle technique'],
+      pensee: ['On pensait à votre véhicule', 'Votre voiture nous manque', 'On a de la disponibilité pour vous'],
+    }
+  },
+  hotel: {
+    ico: '🏨',
+    reasons: [
+      { ico:'🌊', text:'Nouvelle saison / Période idéale', key:'saison' },
+      { ico:'✨', text:'Rénovation ou nouvelle suite', key:'nouveau' },
+      { ico:'🎁', text:'Offre exclusive ancien client', key:'exclusif' },
+      { ico:'🎉', text:'Événement dans la région', key:'event' },
+      { ico:'💝', text:'On pense à vous', key:'pensee' },
+      { ico:'🌿', text:'Nouveau spa ou wellness', key:'spa' },
+    ],
+    contexts: {
+      saison: ['La haute saison est là', 'Le moment idéal pour revenir', 'La météo est parfaite'],
+      nouveau: ['On a rénové et c\'est magnifique', 'De nouvelles suites vous attendent', 'L\'hôtel s\'est transformé'],
+      exclusif: ['Offre réservée à nos anciens clients', 'On vous réserve quelque chose de spécial', 'Vous avez droit à une offre exclusive'],
+      event: ['Un événement exceptionnel dans la région', 'Le moment parfait pour visiter', 'Ne manquez pas ce qui se passe ici'],
+      pensee: ['On pensait à votre séjour', 'Votre dernière visite était mémorable', 'On aimerait vous revoir'],
+      spa: ['Notre nouveau spa vous attend', 'Le wellness est au rendez-vous', 'Venez vous ressourcer'],
+    }
+  },
+  beaute: {
+    ico: '💆',
+    reasons: [
+      { ico:'✨', text:'Nouveau soin ou rituel', key:'soin' },
+      { ico:'🌸', text:'Nouvelle saison, nouveau look', key:'saison' },
+      { ico:'🎁', text:'Offre fidélité', key:'fidelite' },
+      { ico:'💅', text:'Nouvelle technique ou produit', key:'technique' },
+      { ico:'🧖', text:'Forfait relaxation', key:'forfait' },
+      { ico:'💝', text:'On pense à vous', key:'pensee' },
+    ],
+    contexts: {
+      soin: ['Un nouveau soin vient d\'arriver', 'On a un rituel fait pour vous', 'Nos nouveaux soins sont exceptionnels'],
+      saison: ['La nouvelle saison appelle un nouveau rituel', 'Prenez soin de vous en ce changement de saison', 'Votre peau a besoin d\'attention'],
+      fidelite: ['Votre fidélité nous touche', 'On veut vous chouchouter', 'Un geste pour nos clients fidèles'],
+      technique: ['On a de nouvelles techniques', 'Nos prestataires se sont formés', 'De nouvelles tendances sont arrivées'],
+      forfait: ['Un forfait détente vous attend', 'Offrez-vous une vraie pause', 'Le stress mérite d\'être soigné'],
+      pensee: ['On pensait à vous aujourd\'hui', 'Vous nous manquez', 'Votre bien-être nous tient à cœur'],
+    }
+  },
+  sport: {
+    ico: '🏋️',
+    reasons: [
+      { ico:'🏋️', text:'Nouvel équipement / cours', key:'nouveau' },
+      { ico:'🌸', text:'Reprise après les fêtes / vacances', key:'reprise' },
+      { ico:'🎁', text:'Offre de réabonnement', key:'offre' },
+      { ico:'🏆', text:'Challenge ou compétition', key:'challenge' },
+      { ico:'👥', text:'Nouveau coach / programme', key:'coach' },
+      { ico:'💝', text:'On pense à vous', key:'pensee' },
+    ],
+    contexts: {
+      nouveau: ['On a de nouveaux équipements', 'De nouveaux cours sont disponibles', 'La salle s\'est améliorée'],
+      reprise: ['C\'est le moment de reprendre', 'La reprise après les vacances', 'Votre corps vous remerciera'],
+      offre: ['Une offre de réabonnement exclusive', 'On vous facilite le retour', 'Revenez à un super tarif'],
+      challenge: ['Un challenge commence bientôt', 'Rejoignez notre prochain défi', 'On vous attend pour un challenge'],
+      coach: ['Nouveau coach, nouvelle énergie', 'Un nouveau programme vous attend', 'Notre équipe s\'est renforcée'],
+      pensee: ['On pensait à vous', 'Votre silhouette nous manque', 'On vous attend pour continuer'],
+    }
+  }
+};
+
+// ════════ STATE ════════
+let sector  = 'restaurant';
+let delay   = '1 mois';
+let reason  = null;
+
+// ════════ INIT ════════
+function setSec(s, btn) {
+  sector = s;
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  reason = null;
+  renderReasons();
+}
+
+function setDelay(d, btn) {
+  delay = d;
+  document.querySelectorAll('.delay-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function setReason(r, btn) {
+  reason = r;
+  document.querySelectorAll('.reason-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function renderReasons() {
+  const grid = document.getElementById('reasons-grid');
+  const sd = SECTORS[sector];
+  grid.innerHTML = sd.reasons.map((r, i) =>
+    `<button class="reason-btn${i===0?' on':''}" onclick="setReason('${r.key}',this)">
+      <span class="reason-ico">${r.ico}</span>
+      <span class="reason-text">${r.text}</span>
+    </button>`
+  ).join('');
+  reason = sd.reasons[0].key;
+}
+
+// ════════ GÉNÉRATION ════════
+function generate() {
+  const bizName    = document.getElementById('biz-name').value.trim() || 'votre commerce';
+  const clientName = document.getElementById('client-name').value.trim() || 'cher client';
+  const offer      = document.getElementById('offer').value.trim();
+  const sd         = SECTORS[sector];
+  const contexts   = sd.contexts[reason] || sd.contexts[Object.keys(sd.contexts)[0]];
+  const context    = contexts[Math.floor(Math.random() * contexts.length)];
+
+  const prenom = clientName.charAt(0).toUpperCase() + clientName.slice(1);
+  const offerText = offer ? offer : null;
+
+  // Générer 4 messages avec canaux et tons différents
+  const messages = [
+    buildSMS(prenom, bizName, context, offerText, delay),
+    buildWhatsApp(prenom, bizName, context, offerText, delay, sector),
+    buildEmail(prenom, bizName, context, offerText, delay, sector),
+    buildDirect(prenom, bizName, context, offerText, delay),
+  ];
+
+  renderResults(messages, prenom, bizName);
+}
+
+function buildSMS(prenom, biz, context, offer, delay) {
+  const openers = [
+    `${prenom}, ça fait ${delay} qu'on ne vous a pas vu`,
+    `Bonjour ${prenom} ! ${delay} déjà sans vous voir`,
+    `${prenom}... ${delay} sans nouvelles`,
+    `Hey ${prenom}, ${delay} c'est long !`,
+  ];
+  const opener = openers[Math.floor(Math.random() * openers.length)];
+  const offerLine = offer ? `\n\n🎁 ${offer} rien que pour vous.` : '';
+  const closers = [
+    `\n\nOn vous attend avec plaisir 😊\n— ${biz}`,
+    `\n\nHâte de vous revoir ! 🙏\n— ${biz}`,
+    `\n\nÀ très vite !\n— ${biz}`,
+  ];
+  const closer = closers[Math.floor(Math.random() * closers.length)];
+
+  return {
+    canal: 'sms', canalName: 'SMS', canalIco: '📱',
+    tone: 'direct', toneName: 'Direct',
+    text: `${opener}.\n\n${context}.${offerLine}${closer}`,
+    metrics: { taux: '28%', open: '98%', chars: null },
+    metricsLabels: { taux: 'retour moyen', open: 'taux ouverture', chars: null }
+  };
+}
+
+function buildWhatsApp(prenom, biz, context, offer, delay, sector) {
+  const sectorEmojis = { restaurant:'🍽️', coiffure:'✂️', garage:'🔧', hotel:'🏨', beaute:'💆', sport:'🏋️' };
+  const ico = sectorEmojis[sector] || '✨';
+
+  const texts = [
+    `Bonjour ${prenom} ${ico}\n\nCela fait ${delay} qu'on ne s'est pas vus, et honnêtement... vous nous manquez !\n\n${context}.${offer ? `\n\n🎁 Pour l'occasion : *${offer}*` : ''}\n\nOn serait ravis de vous retrouver 😊\n\n_L'équipe ${biz}_`,
+    `Salut ${prenom} ! 👋\n\nOn a une pensée pour vous aujourd'hui. ${delay} que vous n'êtes pas passé(e).\n\n${context}.${offer ? `\n\n✨ On vous réserve : *${offer}*` : ''}\n\nÀ très vite !\n_${biz}_`,
+  ];
+
+  return {
+    canal: 'whatsapp', canalName: 'WhatsApp', canalIco: '💬',
+    tone: 'warm', toneName: 'Chaleureux',
+    text: texts[Math.floor(Math.random() * texts.length)],
+    metrics: { taux: '41%', open: '94%' },
+    metricsLabels: { taux: 'retour moyen', open: 'taux ouverture' }
+  };
+}
+
+function buildEmail(prenom, biz, context, offer, delay, sector) {
+  const subjects = [
+    `${prenom}, on pensait à vous ❤️`,
+    `Cela fait ${delay}... vous nous manquez ${prenom}`,
+    `Un petit mot de ${biz} pour vous, ${prenom}`,
+    `${prenom} — On a quelque chose pour vous`,
+  ];
+
+  const intros = [
+    `Nous espérons que vous allez bien.`,
+    `On espère que tout va bien de votre côté.`,
+    `Nous pensons à vous avec beaucoup de chaleur.`,
+  ];
+
+  const text = `Objet : ${subjects[Math.floor(Math.random() * subjects.length)]}\n\nBonjour ${prenom},\n\n${intros[Math.floor(Math.random() * intros.length)]}\n\nCela fait ${delay} que vous n'êtes pas venu(e) nous voir chez ${biz}, et nous voulions simplement vous dire que vous nous manquez.\n\n${context}, et on aimerait vraiment que vous en fassiez partie.${offer ? `\n\nPour marquer votre retour : ${offer}. C'est notre façon de vous dire merci.` : ''}\n\nNous serions vraiment heureux de vous retrouver bientôt.\n\nÀ très vite,\nL'équipe ${biz}`;
+
+  return {
+    canal: 'email', canalName: 'Email', canalIco: '📧',
+    tone: 'vip', toneName: 'Premium',
+    text,
+    metrics: { taux: '22%', open: '45%' },
+    metricsLabels: { taux: 'retour moyen', open: 'taux ouverture' }
+  };
+}
+
+function buildDirect(prenom, biz, context, offer, delay) {
+  // Message humoristique / original
+  const humorMessages = [
+    `${prenom}... 👀\n\n${delay} sans vous voir chez ${biz}.\n\nOn a vérifié, vous êtes bien vivant(e) ?\n\n${context}. Et franchement, vous le méritez.\n\n${offer ? `On vous réserve même : ${offer} 🎁\n\n` : ''}On vous attend, là, tout de suite (ou quand vous voulez, on est flexibles 😅)\n\n— ${biz}`,
+    `Cher ${prenom},\n\nNous avons réuni notre équipe pour une réunion d'urgence.\n\nL'ordre du jour : Pourquoi ${prenom} ne vient plus ?\n\n${context}... et on a pensé à vous.\n\n${offer ? `Motion votée : ${offer} pour votre retour 🎉\n\n` : ''}Réunion levée. On vous attend !\n\n— ${biz}`,
+    `${prenom}, avouez-le : ça fait ${delay} que vous pensez à nous.\n\nNous, on pense à vous tous les jours.\n\nAlors voilà : ${context}.\n\n${offer ? `Et pour que ça soit encore plus tentant : ${offer} 🎁\n\n` : ''}La balle est dans votre camp maintenant 😏\n\n${biz}`,
+  ];
+
+  return {
+    canal: 'insta', canalName: 'Message original', canalIco: '✨',
+    tone: 'humor', toneName: 'Humoristique',
+    text: humorMessages[Math.floor(Math.random() * humorMessages.length)],
+    metrics: { taux: '38%', open: null },
+    metricsLabels: { taux: 'retour moyen', open: null }
+  };
+}
+
+// ════════ RENDU ════════
+function renderResults(messages, prenom, biz) {
+  const panel = document.getElementById('results');
+  panel.innerHTML = `<div class="results-label">4 messages générés pour ${prenom} — ${biz}</div>`;
+
+  messages.forEach((msg, i) => {
+    const card = document.createElement('div');
+    card.className = 'msg-card';
+    card.style.animationDelay = (i * .08) + 's';
+
+    const toneClass = { warm:'tone-warm', humor:'tone-humor', direct:'tone-direct', vip:'tone-vip' }[msg.tone];
+    const canalClass = { sms:'canal-sms', whatsapp:'canal-whatsapp', email:'canal-email', insta:'canal-insta' }[msg.canal];
+
+    // Mettre en évidence le prénom et le nom du commerce
+    const highlighted = msg.text
+      .replace(new RegExp(prenom, 'g'), `<span class="msg-highlight">${prenom}</span>`)
+      .replace(new RegExp(biz, 'g'), `<span class="msg-highlight">${biz}</span>`)
+      .replace(/\n/g, '<br>');
+
+    const metricsHTML = Object.entries(msg.metrics)
+      .filter(([k,v]) => v !== null)
+      .map(([k,v]) => `<div class="metric"><span class="metric-ico">${k==='taux'?'🎯':k==='open'?'👁️':'📝'}</span><span class="metric-val">${v}</span>&nbsp;<span class="metric-lbl">${msg.metricsLabels[k]}</span></div>`)
+      .join('');
+
+    card.innerHTML = `
+      <div class="msg-card-header">
+        <div class="msg-canal">
+          <div class="canal-ico ${canalClass}">${msg.canalIco}</div>
+          <div>
+            <div class="canal-name">${msg.canalName}</div>
+            <div class="canal-sub">${msg.canal === 'sms' ? '≤ 160 caractères recommandé' : msg.canal === 'whatsapp' ? 'Format WhatsApp Business' : msg.canal === 'email' ? 'Avec objet inclus' : 'Format libre / créatif'}</div>
+          </div>
+        </div>
+        <span class="msg-tone-badge ${toneClass}">${msg.toneName}</span>
+      </div>
+      <div class="msg-preview">${highlighted}</div>
+      <div class="msg-metrics">${metricsHTML}</div>
+      <div class="msg-actions">
+        <button class="btn-copy-msg" onclick="copyMsg(this, ${JSON.stringify(msg.text).replace(/'/g,"\\'")})" >⎘ Copier le message</button>
+        <button class="btn-fav" onclick="this.classList.toggle('faved');this.textContent=this.classList.contains('faved')?'⭐':'☆'" title="Favoris">☆</button>
+      </div>`;
+
+    panel.appendChild(card);
+  });
+
+  // Aperçu téléphone pour le SMS
+  const smsMsg = messages.find(m => m.canal === 'sms');
+  if (smsMsg) {
+    const preview = document.createElement('div');
+    preview.className = 'phone-preview';
+    preview.innerHTML = `
+      <div class="phone-preview-title">📱 Aperçu sur téléphone</div>
+      <div class="phone-mockup">
+        <div class="phone-time">Maintenant</div>
+        <div class="phone-sender">${document.getElementById('biz-name').value.trim() || 'Votre commerce'}</div>
+        <div class="phone-bubble">${smsMsg.text.replace(/\n/g,'<br>')}</div>
+      </div>`;
+    panel.appendChild(preview);
+  }
+}
+
+function copyMsg(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⎘ Copier le message'; btn.classList.remove('copied'); }, 2200);
+    toast('Message copié !');
+  });
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast ok show';
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// Init
+renderReasons();
+</script>
+</body>
+</html>

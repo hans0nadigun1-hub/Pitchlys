@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitchly — Scripts IA SaaS</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0b0e17;
+  --panel:   #111520;
+  --card:    #161b2a;
+  --card2:   #1c2235;
+  --border:  #232b3e;
+  --border2: #2d384f;
+  --blue:    #3b82f6;
+  --blueh:   #60a5fa;
+  --indigo:  #6366f1;
+  --green:   #10b981;
+  --amber:   #f59e0b;
+  --red:     #ef4444;
+  --text:    #f0f4ff;
+  --text2:   #8b9ab8;
+  --text3:   #4a566e;
+  --sans:    'Plus Jakarta Sans', sans-serif;
+  --mono:    'Fira Code', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+
+/* ══ TOP BAR ══ */
+.topbar{height:52px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--blue),var(--indigo));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.brand-name{font-weight:800;font-size:17px;letter-spacing:-.5px}
+.brand-tag{font-family:var(--mono);font-size:10px;color:var(--blueh);background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);padding:2px 8px;border-radius:4px}
+.top-tabs{display:flex;gap:2px}
+.top-tab{font-size:12px;font-weight:600;padding:6px 14px;border-radius:7px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:var(--sans);transition:all .15s}
+.top-tab:hover{background:var(--card);color:var(--text2)}
+.top-tab.on{background:var(--card);color:var(--text);border:1px solid var(--border2)}
+
+/* ══ WORKSPACE ══ */
+.workspace{display:flex;flex:1;overflow:hidden}
+
+/* ══ LEFT — CONFIG ══ */
+.cpanel{width:272px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.cp-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cp-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+.cp-reset{font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:var(--sans);transition:color .15s}
+.cp-reset:hover{color:var(--red)}
+.cp-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px}
+.cp-body::-webkit-scrollbar{width:3px}
+.cp-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* Mode */
+.mode-switch{display:flex;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:3px;gap:3px}
+.mode-opt{flex:1;padding:9px 4px;border-radius:7px;border:none;background:transparent;color:var(--text3);font-family:var(--sans);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1.2}
+.mode-opt .ico{font-size:18px}
+.mode-opt:hover{color:var(--text2)}
+.mode-opt.on{background:var(--blue);color:#fff}
+
+/* Field */
+.f{display:flex;flex-direction:column;gap:5px}
+.f label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase}
+.f input,.f textarea,.f select{font-family:var(--sans);font-size:13px;padding:9px 11px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none;transition:border-color .15s;resize:none}
+.f input::placeholder,.f textarea::placeholder{color:var(--text3)}
+.f input:focus,.f textarea:focus,.f select:focus{border-color:var(--blue)}
+.f select option{background:var(--card2)}
+.f textarea{min-height:64px}
+
+/* Tags chips */
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--card);color:var(--text3);cursor:pointer;transition:all .12s;font-family:var(--mono)}
+.chip:hover{border-color:var(--border2);color:var(--text2)}
+.chip.on{border-color:var(--blue);color:var(--blueh);background:rgba(59,130,246,.1)}
+.chip.on-r{border-color:var(--red);color:#fca5a5;background:rgba(239,68,68,.1)}
+
+/* Slider */
+.sl-row{display:flex;align-items:center;gap:10px}
+input[type=range]{flex:1;padding:0;border:none;background:transparent;accent-color:var(--blue);cursor:pointer;outline:none;box-shadow:none}
+.sl-val{font-family:var(--mono);font-size:12px;color:var(--blueh);min-width:38px;text-align:right}
+
+/* Divider label */
+.divlabel{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding-bottom:4px;border-bottom:1px solid var(--border)}
+
+/* Generate button */
+.btn-gen{width:100%;padding:12px;background:linear-gradient(135deg,var(--blue),var(--indigo));border:none;border-radius:10px;font-family:var(--sans);font-weight:800;font-size:14px;color:#fff;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;letter-spacing:.2px}
+.btn-gen:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(59,130,246,.3)}
+.btn-gen:active{transform:translateY(0)}
+.btn-gen:disabled{background:var(--card2);color:var(--text3);transform:none;box-shadow:none;cursor:not-allowed}
+.btn-gen .spin{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ CENTER — SCRIPT ══ */
+.smain{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* Empty */
+.s-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;text-align:center}
+.s-empty-icon{width:64px;height:64px;background:var(--card);border:1px solid var(--border2);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px}
+.s-empty h2{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.s-empty p{font-size:13px;color:var(--text2);max-width:340px;line-height:1.7}
+.s-empty-chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.s-empty-chip{font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);color:var(--text3)}
+
+/* Loading */
+.s-load{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.load-ring{width:48px;height:48px;border:3px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite}
+.load-steps{display:flex;flex-direction:column;gap:7px;align-items:flex-start}
+.lstep{font-family:var(--mono);font-size:12px;color:var(--text3);display:flex;align-items:center;gap:8px;transition:color .3s}
+.lstep.on{color:var(--blueh)}
+.lstep.done{color:var(--green)}
+.lstep .dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* Output bar */
+.s-outbar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0}
+.outbar-left{display:flex;align-items:center;gap:10px}
+.outbar-title{font-weight:700;font-size:14px}
+.outbar-badge{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:4px;font-weight:500}
+.badge-vente{background:rgba(59,130,246,.15);color:var(--blueh);border:1px solid rgba(59,130,246,.25)}
+.badge-support{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.25)}
+.outbar-right{display:flex;gap:6px}
+.act{font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:var(--sans);transition:all .15s;display:flex;align-items:center;gap:5px}
+.act:hover{background:var(--card2);color:var(--text)}
+.act.prim{background:var(--blue);border-color:var(--blue);color:#fff}
+.act.prim:hover{background:var(--blueh)}
+
+/* Script scroll */
+.s-scroll{flex:1;overflow-y:auto;padding:20px 24px}
+.s-scroll::-webkit-scrollbar{width:4px}
+.s-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.script-wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:0}
+
+/* Stats */
+.stat-row{display:flex;gap:0;margin-bottom:18px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.stat-cell{flex:1;padding:12px 14px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:2px}
+.stat-cell:last-child{border-right:none}
+.stat-n{font-family:var(--mono);font-weight:500;font-size:18px;color:var(--blueh)}
+.stat-l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+
+/* Script section */
+.sc{margin-bottom:12px;animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sc-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sc-tag{font-family:var(--mono);font-size:10px;font-weight:500;padding:2px 9px;border-radius:3px;letter-spacing:.8px;text-transform:uppercase}
+.t-blue{background:rgba(59,130,246,.15);color:var(--blueh);border:1px solid rgba(59,130,246,.2)}
+.t-indigo{background:rgba(99,102,241,.15);color:#a5b4fc;border:1px solid rgba(99,102,241,.2)}
+.t-green{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+.t-amber{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.2)}
+.t-red{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.2)}
+.t-gray{background:rgba(74,86,110,.2);color:var(--text2);border:1px solid var(--border2)}
+.sc-line{flex:1;height:1px;background:var(--border)}
+.sc-body{font-size:13.5px;line-height:1.85;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:9px;padding:16px 18px;white-space:pre-wrap;position:relative}
+.sc-body.hl-blue{border-left:2px solid var(--blue)}
+.sc-body.hl-green{border-left:2px solid var(--green)}
+.sc-body.hl-amber{border-left:2px solid var(--amber)}
+.sc-body.hl-red{border-left:2px solid var(--red)}
+
+/* ══ RIGHT — TELEPROMPTER ══ */
+.tpanel{width:320px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.tp-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tp-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+.tp-status{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px}
+.tp-status.idle{color:var(--text3);background:var(--card);border:1px solid var(--border)}
+.tp-status.running{color:var(--green);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);animation:pulse-s 1.5s ease infinite}
+.tp-status.paused{color:var(--amber);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
+@keyframes pulse-s{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* Teleprompter display */
+.tp-display{flex:1;overflow:hidden;position:relative;background:var(--bg)}
+.tp-overlay-top{position:absolute;top:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,var(--bg),transparent);z-index:3;pointer-events:none}
+.tp-overlay-bot{position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,var(--bg),transparent);z-index:3;pointer-events:none}
+.tp-cursor-line{position:absolute;top:50%;left:0;right:0;height:2px;background:rgba(59,130,246,.4);z-index:2;transform:translateY(-50%)}
+.tp-cursor-line::before,.tp-cursor-line::after{content:'';position:absolute;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--blue)}
+.tp-cursor-line::before{left:8px}
+.tp-cursor-line::after{right:8px}
+.tp-scroll-inner{padding:200px 24px;transition:transform .05s linear}
+.tp-word{font-size:22px;font-weight:600;line-height:1.6;color:var(--text3);display:inline;transition:color .1s}
+.tp-word.current{color:#fff;font-size:24px}
+.tp-word.done{color:var(--text3)}
+.tp-word.next{color:var(--text2)}
+.tp-space{display:inline} 
+
+/* Teleprompter controls */
+.tp-controls{padding:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+.tp-ctrl-row{display:flex;gap:8px;align-items:center}
+
+.tp-btn{flex:1;padding:10px;border-radius:9px;border:1px solid var(--border2);background:var(--card);color:var(--text2);font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.tp-btn:hover{background:var(--card2);color:var(--text);border-color:var(--border2)}
+.tp-btn.play{background:var(--blue);border-color:var(--blue);color:#fff}
+.tp-btn.play:hover{background:var(--blueh)}
+.tp-btn.stop{background:rgba(239,68,68,.12);border-color:var(--red);color:#fca5a5}
+.tp-btn.stop:hover{background:rgba(239,68,68,.2)}
+.tp-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.tp-speed-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tp-speed-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);white-space:nowrap}
+.tp-speed-btns{display:flex;gap:4px}
+.spd-btn{font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:5px;border:1px solid var(--border);background:var(--card);color:var(--text3);cursor:pointer;transition:all .12s}
+.spd-btn:hover{color:var(--text2)}
+.spd-btn.on{border-color:var(--blue);color:var(--blueh);background:rgba(59,130,246,.1)}
+
+.tp-progress-wrap{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.tp-progress-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--indigo));border-radius:2px;width:0%;transition:width .3s}
+
+.tp-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;padding:24px;text-align:center;color:var(--text3)}
+.tp-empty-icon{font-size:32px;margin-bottom:4px}
+.tp-empty p{font-size:12px;line-height:1.6;font-family:var(--mono)}
+
+/* Section navigator */
+.tp-nav{padding:10px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.tp-nav-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3)}
+.tp-sections{display:flex;flex-direction:column;gap:3px;max-height:130px;overflow-y:auto}
+.tp-sections::-webkit-scrollbar{width:2px}
+.tp-sections::-webkit-scrollbar-thumb{background:var(--border2)}
+.tp-sec-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer;transition:background .12s;border:1px solid transparent}
+.tp-sec-item:hover{background:var(--card)}
+.tp-sec-item.on{background:var(--card);border-color:var(--border2)}
+.tp-sec-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tp-sec-name{font-size:11px;font-weight:600;color:var(--text2)}
+.tp-sec-item.on .tp-sec-name{color:var(--text)}
+
+/* History view */
+#view-hist{display:none;flex:1;overflow-y:auto;padding:20px 24px}
+.hist-wrap{max-width:800px;margin:0 auto}
+.hist-title-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.hist-h{font-size:16px;font-weight:800}
+.hist-clear{font-size:12px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--sans);font-weight:600}
+.hist-grid{display:flex;flex-direction:column;gap:10px}
+.hist-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .15s}
+.hist-card:hover{border-color:var(--blue)}
+.hist-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hist-card-mode{font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.hist-card-date{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.hist-card-title{font-weight:700;font-size:14px;margin-bottom:4px}
+.hist-card-prev{font-size:12px;color:var(--text2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.6}
+.hist-empty{text-align:center;color:var(--text3);font-family:var(--mono);font-size:12px;padding:60px 0}
+
+/* Toast */
+.toast{position:fixed;bottom:18px;right:18px;background:var(--card2);border:1px solid var(--green);color:#34d399;padding:10px 16px;border-radius:8px;font-family:var(--mono);font-size:12px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ══ TOP BAR ══ -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-icon">⚡</div>
+    <div class="brand-name">Pitchly</div>
+    <div class="brand-tag">SaaS Scripts</div>
+  </div>
+  <div class="top-tabs">
+    <button class="top-tab on" onclick="switchView('gen',this)">Générateur</button>
+    <button class="top-tab" onclick="switchView('hist',this)">Historique</button>
+  </div>
+</div>
+
+<!-- ══ WORKSPACE ══ -->
+<div class="workspace">
+
+  <!-- ══ LEFT — CONFIG PANEL ══ -->
+  <aside class="cpanel">
+    <div class="cp-head">
+      <div class="cp-title">Configuration</div>
+      <button class="cp-reset" onclick="resetForm()">Réinitialiser</button>
+    </div>
+    <div class="cp-body">
+
+      <!-- Mode -->
+      <div class="f">
+        <label>Mode</label>
+        <div class="mode-switch">
+          <button class="mode-opt on" id="mode-vente" onclick="setMode('vente')">
+            <span class="ico">📞</span>Cold Call
+          </button>
+          <button class="mode-opt" id="mode-support" onclick="setMode('support')">
+            <span class="ico">🎧</span>Support
+          </button>
+        </div>
+      </div>
+
+      <!-- Produit -->
+      <div class="f">
+        <label>Nom du SaaS</label>
+        <input id="f-product" type="text" placeholder="ex: Salesflow CRM">
+      </div>
+
+      <!-- Feature -->
+      <div class="f">
+        <label>Valeur / fonctionnalité clé</label>
+        <textarea id="f-feature" placeholder="ex: Automatisation des relances, intégration HubSpot, IA de scoring..."></textarea>
+      </div>
+
+      <!-- Persona -->
+      <div class="f">
+        <label>Persona cible</label>
+        <input id="f-persona" type="text" placeholder="ex: Head of Sales, startup 20–100p">
+      </div>
+
+      <!-- Segment -->
+      <div class="f">
+        <label>Segment client</label>
+        <div class="chips" id="chips-seg">
+          <div class="chip on" onclick="toggleChip(this)">SMB</div>
+          <div class="chip" onclick="toggleChip(this)">Mid-Market</div>
+          <div class="chip" onclick="toggleChip(this)">Enterprise</div>
+          <div class="chip" onclick="toggleChip(this)">Startup</div>
+          <div class="chip" onclick="toggleChip(this)">Scaleup</div>
+        </div>
+      </div>
+
+      <!-- Ton -->
+      <div class="f">
+        <label>Ton</label>
+        <div class="chips" id="chips-ton">
+          <div class="chip on" onclick="setSingle(this,'chips-ton')">Consultatif</div>
+          <div class="chip" onclick="setSingle(this,'chips-ton')">Direct / ROI</div>
+          <div class="chip" onclick="setSingle(this,'chips-ton')">Technique</div>
+          <div class="chip" onclick="setSingle(this,'chips-ton')">Empathique</div>
+        </div>
+      </div>
+
+      <!-- Objections (vente only) -->
+      <div id="block-obj">
+        <div class="f">
+          <label>Objections à couvrir</label>
+          <div class="chips" id="chips-obj">
+            <div class="chip on on-r" onclick="toggleChip(this)">"Trop cher"</div>
+            <div class="chip on-r" onclick="toggleChip(this)">"Déjà un outil"</div>
+            <div class="chip on on-r" onclick="toggleChip(this)">"Pas le moment"</div>
+            <div class="chip on-r" onclick="toggleChip(this)">"Besoin d'accord"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Durée -->
+      <div class="f">
+        <label>Durée estimée</label>
+        <div class="sl-row">
+          <input type="range" id="f-dur" min="1" max="20" value="5" oninput="document.getElementById('dur-val').textContent=this.value+'min'">
+          <span class="sl-val" id="dur-val">5min</span>
+        </div>
+      </div>
+
+      <!-- Langue -->
+      <div class="f">
+        <label>Langue</label>
+        <select id="f-lang">
+          <option value="fr" selected>🇫🇷 Français</option>
+          <option value="en">🇬🇧 English</option>
+          <option value="es">🇪🇸 Español</option>
+        </select>
+      </div>
+
+      <!-- Notes -->
+      <div class="f">
+        <label>Notes supplémentaires</label>
+        <textarea id="f-notes" placeholder="ex: Prospect contacté 2x, utilise Salesforce..."></textarea>
+      </div>
+
+      <!-- CTA -->
+      <button class="btn-gen" id="btn-gen" onclick="generate()">
+        <span id="btn-txt">⚡ Générer le script</span>
+        <div class="spin" id="btn-spin"></div>
+      </button>
+
+    </div>
+  </aside>
+
+  <!-- ══ CENTER — SCRIPT OUTPUT ══ -->
+  <main class="smain" id="view-gen">
+
+    <!-- Empty state -->
+    <div class="s-empty" id="st-empty">
+      <div class="s-empty-icon">⚡</div>
+      <h2>Prêt à générer</h2>
+      <p>Configurez votre script à gauche, cliquez sur Générer et utilisez le téléprompter à droite pour vous entraîner en live.</p>
+      <div class="s-empty-chips">
+        <div class="s-empty-chip">cold-call-b2b</div>
+        <div class="s-empty-chip">support-saas</div>
+        <div class="s-empty-chip">objection-handler</div>
+        <div class="s-empty-chip">closing-technique</div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="s-load" id="st-load">
+      <div class="load-ring"></div>
+      <div class="load-steps">
+        <div class="lstep" id="ls0"><span class="dot"></span>Analyse du contexte SaaS...</div>
+        <div class="lstep" id="ls1"><span class="dot"></span>Structuration du script...</div>
+        <div class="lstep" id="ls2"><span class="dot"></span>Rédaction des répliques...</div>
+        <div class="lstep" id="ls3"><span class="dot"></span>Intégration des objections...</div>
+        <div class="lstep" id="ls4"><span class="dot"></span>Finalisation...</div>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="s-outbar" id="out-bar" style="display:none">
+      <div class="outbar-left">
+        <span class="outbar-title" id="out-title">Script généré</span>
+        <span class="outbar-badge" id="out-badge"></span>
+      </div>
+      <div class="outbar-right">
+        <button class="act" onclick="generate()">↺ Régénérer</button>
+        <button class="act" onclick="doExport()">↓ .txt</button>
+        <button class="act prim" onclick="doCopy()">⎘ Copier tout</button>
+      </div>
+    </div>
+
+    <div class="s-scroll" id="st-out" style="display:none">
+      <div class="script-wrap" id="script-wrap"></div>
+    </div>
+
+  </main>
+
+  <!-- ══ RIGHT — TÉLÉPROMPTER ══ -->
+  <aside class="tpanel">
+    <div class="tp-head">
+      <div class="tp-title">📺 Téléprompter</div>
+      <div class="tp-status idle" id="tp-status">INACTIF</div>
+    </div>
+
+    <!-- Display -->
+    <div class="tp-display" id="tp-display">
+      <div class="tp-overlay-top"></div>
+      <div class="tp-overlay-bot"></div>
+      <div class="tp-cursor-line"></div>
+      <div class="tp-scroll-inner" id="tp-inner">
+        <div class="tp-empty">
+          <div class="tp-empty-icon">🎙️</div>
+          <p>Générez un script<br>pour activer le téléprompter</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section navigator -->
+    <div class="tp-nav" id="tp-nav" style="display:none">
+      <div class="tp-nav-title">Sections</div>
+      <div class="tp-sections" id="tp-sections"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="tp-controls">
+      <div class="tp-progress-wrap">
+        <div class="tp-progress-bar" id="tp-progress"></div>
+      </div>
+      <div class="tp-ctrl-row">
+        <button class="tp-btn play" id="tp-play" onclick="tpPlay()" disabled>▶ Démarrer</button>
+        <button class="tp-btn" id="tp-pause" onclick="tpPause()" disabled>⏸ Pause</button>
+        <button class="tp-btn stop" id="tp-stop" onclick="tpStop()" disabled>■ Stop</button>
+      </div>
+      <div class="tp-speed-row">
+        <span class="tp-speed-label">Vitesse</span>
+        <div class="tp-speed-btns">
+          <button class="spd-btn" onclick="setSpeed(.5,this)">0.5×</button>
+          <button class="spd-btn on" onclick="setSpeed(1,this)">1×</button>
+          <button class="spd-btn" onclick="setSpeed(1.5,this)">1.5×</button>
+          <button class="spd-btn" onclick="setSpeed(2,this)">2×</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ HISTORY VIEW ══ -->
+  <div id="view-hist" style="display:none;flex:1;overflow-y:auto;padding:20px 24px">
+    <div class="hist-wrap">
+      <div class="hist-title-bar">
+        <div class="hist-h">Historique des scripts</div>
+        <button class="hist-clear" onclick="clearHistory()">Tout effacer</button>
+      </div>
+      <div class="hist-grid" id="hist-list">
+        <div class="hist-empty">Aucun script généré pour l'instant.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- workspace -->
+
+<div class="toast" id="toast">✓ Copié dans le presse-papier</div>
+
+<script>
+// ══ STATE ══
+let mode = 'vente';
+let scriptSections = [];
+let history = JSON.parse(localStorage.getItem('pitchly_hist') || '[]');
+
+// Teleprompter state
+let tpWords = [];
+let tpIdx = 0;
+let tpTimer = null;
+let tpSpeed = 1;
+let tpRunning = false;
+let tpPaused = false;
+let tpSectionOffsets = [];
+let currentSectionIdx = 0;
+
+// ══ VIEW SWITCH ══
+function switchView(v, btn) {
+  document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+
+  const isGen = v === 'gen';
+  document.querySelector('.cpanel').style.display  = isGen ? 'flex' : 'none';
+  document.getElementById('view-gen').style.display = isGen ? 'flex' : 'none';
+  document.querySelector('.tpanel').style.display  = isGen ? 'flex' : 'none';
+  document.getElementById('view-hist').style.display = isGen ? 'none' : 'block';
+
+  if (v === 'hist') renderHistory();
+}
+
+// ══ MODE ══
+function setMode(m) {
+  mode = m;
+  document.getElementById('mode-vente').classList.toggle('on', m === 'vente');
+  document.getElementById('mode-support').classList.toggle('on', m === 'support');
+  document.getElementById('block-obj').style.display = m === 'vente' ? 'block' : 'none';
+}
+
+// ══ CHIPS ══
+function toggleChip(el) { el.classList.toggle('on'); }
+function setSingle(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+}
+function getChips(groupId) {
+  return [...document.querySelectorAll('#' + groupId + ' .chip.on')].map(c => c.textContent).join(', ');
+}
+
+// ══ RESET ══
+function resetForm() {
+  document.getElementById('f-product').value = '';
+  document.getElementById('f-feature').value = '';
+  document.getElementById('f-persona').value = '';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('f-dur').value = 5;
+  document.getElementById('dur-val').textContent = '5min';
+}
+
+// ══ LOADING STEPS ANIMATION ══
+let stepTimer, stepIdx2 = 0;
+function startSteps() {
+  stepIdx2 = 0;
+  document.querySelectorAll('.lstep').forEach(s => { s.classList.remove('on','done'); });
+  document.getElementById('ls0').classList.add('on');
+  stepTimer = setInterval(() => {
+    const cur = document.getElementById('ls' + stepIdx2);
+    if (cur) cur.classList.replace('on','done');
+    stepIdx2++;
+    const nxt = document.getElementById('ls' + stepIdx2);
+    if (nxt) nxt.classList.add('on');
+  }, 2000);
+}
+function stopSteps() { clearInterval(stepTimer); }
+
+// ══ SHOW STATE ══
+function showState(s) {
+  document.getElementById('st-empty').style.display = 'none';
+  document.getElementById('st-load').style.display  = 'none';
+  document.getElementById('st-out').style.display   = 'none';
+  document.getElementById('out-bar').style.display  = 'none';
+
+  if (s === 'empty')  document.getElementById('st-empty').style.display = 'flex';
+  if (s === 'load') { document.getElementById('st-load').style.display  = 'flex'; }
+  if (s === 'out') {
+    document.getElementById('out-bar').style.display = 'flex';
+    document.getElementById('st-out').style.display  = 'block';
+  }
+}
+
+// ══ GENERATE ══
+async function generate() {
+  const product = document.getElementById('f-product').value.trim();
+  const feature = document.getElementById('f-feature').value.trim();
+  const persona = document.getElementById('f-persona').value.trim();
+  const notes   = document.getElementById('f-notes').value.trim();
+  const dur     = document.getElementById('f-dur').value;
+  const lang    = document.getElementById('f-lang').value;
+  const seg     = getChips('chips-seg') || 'Non précisé';
+  const ton     = getChips('chips-ton') || 'Consultatif';
+  const objs    = mode === 'vente' ? getChips('chips-obj') : '';
+
+  if (!product && !feature) {
+    alert('Renseignez au moins le nom du SaaS ou la valeur clé.');
+    return;
+  }
+
+  // Lock UI
+  const btn = document.getElementById('btn-gen');
+  btn.disabled = true;
+  document.getElementById('btn-txt').style.display = 'none';
+  document.getElementById('btn-spin').style.display = 'block';
+  showState('load');
+  startSteps();
+  tpStop();
+
+  const langLabel = { fr: 'français', en: 'anglais', es: 'espagnol' }[lang] || 'français';
+
+  const structVente = `Structure cold call SaaS B2B (durée ~${dur} min):
+1. ACCROCHE — hook percutant, personnalisé au persona
+2. PRÉSENTATION — 2 phrases max sur le produit
+3. QUALIFICATION — 1–2 questions pour confirmer le besoin
+4. PITCH VALEUR — bénéfice principal, chiffre ROI si possible
+5. PREUVE SOCIALE — exemple client ou résultat concret
+6. OBJECTIONS — réponse précise à chaque objection sélectionnée : ${objs || 'courantes'}
+7. CLOSING — proposition de RDV démonstration
+8. SUIVI — phrase de relance si pas de réponse
+${notes ? '9. NOTE FORMATEUR — conseils de livraison pour ce script' : ''}`;
+
+  const structSupport = `Structure support client SaaS (durée ~${dur} min):
+1. ACCUEIL — salutation chaleureuse, identification
+2. ÉCOUTE ACTIVE — reformulation du problème
+3. EMPATHIE — reconnaissance de la frustration
+4. DIAGNOSTIC — questions ciblées pour comprendre le problème
+5. SOLUTION — explication claire étape par étape
+6. VÉRIFICATION — confirmer que le problème est résolu
+7. PRÉVENTION — éviter que ça se reproduise
+8. CLÔTURE — satisfaction client, prochaine étape
+${notes ? '9. NOTE FORMATEUR — conseils de livraison' : ''}`;
+
+  const prompt = `Tu es expert en scripts de vente et support pour startups et éditeurs SaaS B2B.
+
+Génère un script de ${mode === 'vente' ? 'cold call B2B' : 'support client'} en ${langLabel} pour ce contexte :
+- Produit SaaS : ${product || 'non précisé'}
+- Valeur clé : ${feature || 'non précisée'}
+- Persona : ${persona || 'décideur B2B'}
+- Segment : ${seg}
+- Ton : ${ton}
+- Contexte additionnel : ${notes || 'aucun'}
+
+${mode === 'vente' ? structVente : structSupport}
+
+RÈGLES IMPÉRATIVES :
+- Chaque réplique doit être naturelle, directe, prête à être prononcée à voix haute
+- Pas de généricités — chaque section doit mentionner le produit ou le contexte réel
+- Adapter le vocabulaire au segment ${seg}
+- Chaque section doit faire au moins 3–5 phrases complètes
+
+Retourne UNIQUEMENT un objet JSON valide (aucun markdown, aucun backtick) dans ce format exact :
+{
+  "sections": [
+    {
+      "tag": "NOM SECTION EN MAJUSCULES (2–3 mots max)",
+      "color": "blue|indigo|green|amber|red|gray",
+      "hl": "blue|green|amber|red|none",
+      "content": "Texte complet de la section avec les répliques exactes..."
+    }
+  ]
+}
+
+Utilise ces couleurs selon le type :
+- blue : intro, présentation, accueil
+- indigo : qualification, diagnostic  
+- green : pitch, solution, closing
+- amber : preuve sociale, vérification
+- red : objections, escalade
+- gray : notes formateur, suivi`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error('API error ' + res.status + ': ' + err);
+    }
+
+    const data = await res.json();
+    stopSteps();
+
+    const raw = (data.content || []).map(i => i.text || '').join('');
+    // Extraction robuste du JSON même si le modèle ajoute du texte autour
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Aucun JSON trouvé dans la réponse');
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    scriptSections = parsed.sections || [];
+
+    btn.disabled = false;
+    document.getElementById('btn-txt').style.display = 'inline';
+    document.getElementById('btn-spin').style.display = 'none';
+
+    renderScript(scriptSections, { product: product || feature, dur });
+    loadTeleprompter(scriptSections);
+
+    // Save history
+    history.unshift({
+      id: Date.now(),
+      mode,
+      product: product || feature,
+      dur,
+      sections: scriptSections,
+      date: new Date().toLocaleDateString('fr-FR')
+    });
+    if (history.length > 20) history.pop();
+    localStorage.setItem('pitchly_hist', JSON.stringify(history));
+
+  } catch(e) {
+    stopSteps();
+    btn.disabled = false;
+    document.getElementById('btn-txt').style.display = 'inline';
+    document.getElementById('btn-spin').style.display = 'none';
+    showState('empty');
+    console.error('Pitchly error:', e);
+    alert('Erreur : ' + e.message + '\n\nVérifiez votre connexion et réessayez.');
+  }
+}
+
+// ══ RENDER SCRIPT ══
+function renderScript(sections, meta) {
+  showState('out');
+
+  const titles = { vente: '📞 Cold Call — ' + (meta.product || 'Script'), support: '🎧 Support — ' + (meta.product || 'Script') };
+  document.getElementById('out-title').textContent = titles[mode];
+  const badge = document.getElementById('out-badge');
+  badge.textContent = mode === 'vente' ? 'Vente' : 'Support';
+  badge.className = 'outbar-badge ' + (mode === 'vente' ? 'badge-vente' : 'badge-support');
+
+  const wrap = document.getElementById('script-wrap');
+  wrap.innerHTML = '';
+
+  // Stats
+  const words = sections.reduce((a, s) => a + s.content.split(' ').length, 0);
+  const stats = document.createElement('div');
+  stats.className = 'stat-row';
+  stats.innerHTML = `
+    <div class="stat-cell"><div class="stat-n">${words}</div><div class="stat-l">mots</div></div>
+    <div class="stat-cell"><div class="stat-n">${meta.dur}min</div><div class="stat-l">durée</div></div>
+    <div class="stat-cell"><div class="stat-n">${sections.length}</div><div class="stat-l">sections</div></div>
+    <div class="stat-cell"><div class="stat-n">${mode === 'vente' ? 'Vente' : 'Support'}</div><div class="stat-l">mode</div></div>
+  `;
+  wrap.appendChild(stats);
+
+  sections.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'sc';
+    div.style.animationDelay = (i * 0.05) + 's';
+    div.dataset.idx = i;
+    div.innerHTML = `
+      <div class="sc-head">
+        <div class="sc-tag t-${s.color || 'blue'}">${s.tag}</div>
+        <div class="sc-line"></div>
+      </div>
+      <div class="sc-body ${s.hl !== 'none' ? 'hl-' + (s.hl || 'blue') : ''}">${s.content}</div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+// ══ TELEPROMPTER ══
+function loadTeleprompter(sections) {
+  // Build word list with section markers
+  tpWords = [];
+  tpSectionOffsets = [];
+  let wordIdx = 0;
+
+  sections.forEach((sec, si) => {
+    tpSectionOffsets.push({ idx: wordIdx, tag: sec.tag, color: sec.color || 'blue' });
+    const words = sec.content.split(/\s+/).filter(Boolean);
+    words.forEach(w => {
+      tpWords.push({ word: w, secIdx: si });
+    });
+    wordIdx += words.length;
+  });
+
+  // Render words
+  const inner = document.getElementById('tp-inner');
+  inner.innerHTML = '';
+  tpWords.forEach((w, i) => {
+    const span = document.createElement('span');
+    span.className = 'tp-word';
+    span.dataset.idx = i;
+    span.textContent = w.word;
+    inner.appendChild(span);
+    const space = document.createElement('span');
+    space.className = 'tp-space';
+    space.textContent = ' ';
+    inner.appendChild(space);
+  });
+
+  tpIdx = 0;
+  tpRunning = false;
+  tpPaused = false;
+  updateTpUI(false);
+  highlightWord(0);
+  updateProgress();
+
+  // Render section nav
+  const secList = document.getElementById('tp-sections');
+  secList.innerHTML = '';
+  tpSectionOffsets.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'tp-sec-item' + (i === 0 ? ' on' : '');
+    item.dataset.idx = i;
+    item.innerHTML = `<div class="tp-sec-dot" style="background:var(--${colorToVar(s.color)})"></div><div class="tp-sec-name">${s.tag}</div>`;
+    item.onclick = () => jumpToSection(i);
+    secList.appendChild(item);
+  });
+  document.getElementById('tp-nav').style.display = 'flex';
+
+  // Enable controls
+  document.getElementById('tp-play').disabled = false;
+  document.getElementById('tp-stop').disabled = false;
+}
+
+function colorToVar(c) {
+  const map = { blue: 'blue', indigo: 'indigo', green: 'green', amber: 'amber', red: 'red', gray: 'text2' };
+  return map[c] || 'blue';
+}
+
+function highlightWord(idx) {
+  document.querySelectorAll('.tp-word').forEach((el, i) => {
+    el.classList.remove('current', 'done', 'next');
+    if (i < idx) el.classList.add('done');
+    else if (i === idx) el.classList.add('current');
+    else if (i <= idx + 8) el.classList.add('next');
+  });
+
+  // Scroll
+  const el = document.querySelector('[data-idx="' + idx + '"].tp-word');
+  if (el) {
+    const display = document.getElementById('tp-display');
+    const displayH = display.offsetHeight;
+    const inner = document.getElementById('tp-inner');
+    const elTop = el.offsetTop + parseInt(getComputedStyle(inner).paddingTop || 200);
+    const target = elTop - displayH / 2;
+    inner.style.transform = `translateY(${-Math.max(0, target)}px)`;
+  }
+
+  // Update section nav
+  if (tpWords[idx]) {
+    const si = tpWords[idx].secIdx;
+    document.querySelectorAll('.tp-sec-item').forEach((el2, i) => {
+      el2.classList.toggle('on', i === si);
+    });
+    currentSectionIdx = si;
+  }
+
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = tpWords.length ? (tpIdx / tpWords.length) * 100 : 0;
+  document.getElementById('tp-progress').style.width = pct + '%';
+}
+
+function updateTpUI(running) {
+  const statusEl = document.getElementById('tp-status');
+  const playBtn = document.getElementById('tp-play');
+  const pauseBtn = document.getElementById('tp-pause');
+
+  if (running && !tpPaused) {
+    statusEl.textContent = 'EN COURS';
+    statusEl.className = 'tp-status running';
+    playBtn.disabled = true;
+    pauseBtn.disabled = false;
+  } else if (tpPaused) {
+    statusEl.textContent = 'PAUSE';
+    statusEl.className = 'tp-status paused';
+    playBtn.textContent = '▶ Reprendre';
+    playBtn.disabled = false;
+    pauseBtn.disabled = true;
+  } else {
+    statusEl.textContent = 'INACTIF';
+    statusEl.className = 'tp-status idle';
+    playBtn.textContent = '▶ Démarrer';
+    playBtn.disabled = tpWords.length === 0;
+    pauseBtn.disabled = true;
+  }
+}
+
+function tpPlay() {
+  if (tpWords.length === 0) return;
+  if (tpIdx >= tpWords.length) tpIdx = 0;
+  tpRunning = true;
+  tpPaused = false;
+  updateTpUI(true);
+  runTp();
+}
+
+function runTp() {
+  if (!tpRunning || tpPaused) return;
+  if (tpIdx >= tpWords.length) {
+    tpStop();
+    return;
+  }
+  highlightWord(tpIdx);
+  tpIdx++;
+  // Base: ~130 words/min average speech = ~460ms per word, adjusted by speed
+  const delay = Math.round(460 / tpSpeed);
+  tpTimer = setTimeout(runTp, delay);
+}
+
+function tpPause() {
+  tpPaused = true;
+  tpRunning = false;
+  clearTimeout(tpTimer);
+  updateTpUI(false);
+}
+
+function tpStop() {
+  tpRunning = false;
+  tpPaused = false;
+  clearTimeout(tpTimer);
+  tpIdx = 0;
+  if (tpWords.length > 0) highlightWord(0);
+  updateTpUI(false);
+  document.getElementById('tp-play').textContent = '▶ Démarrer';
+}
+
+function setSpeed(s, btn) {
+  tpSpeed = s;
+  document.querySelectorAll('.spd-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function jumpToSection(si) {
+  const offset = tpSectionOffsets[si];
+  if (!offset) return;
+  tpIdx = offset.idx;
+  highlightWord(tpIdx);
+  if (tpRunning && !tpPaused) {
+    clearTimeout(tpTimer);
+    runTp();
+  }
+}
+
+// ══ EXPORT / COPY ══
+function doCopy() {
+  let txt = '';
+  document.querySelectorAll('.sc').forEach(s => {
+    txt += '[' + (s.querySelector('.sc-tag')?.textContent || '') + ']\n';
+    txt += (s.querySelector('.sc-body')?.textContent || '').trim() + '\n\n';
+  });
+  navigator.clipboard.writeText(txt.trim()).then(() => showToast('✓ Copié dans le presse-papier'));
+}
+
+function doExport() {
+  let txt = `PITCHLY — Script ${mode === 'vente' ? 'Cold Call' : 'Support'}\nGénéré le ${new Date().toLocaleDateString('fr-FR')}\n${'─'.repeat(50)}\n\n`;
+  document.querySelectorAll('.sc').forEach(s => {
+    txt += '[' + (s.querySelector('.sc-tag')?.textContent || '') + ']\n';
+    txt += (s.querySelector('.sc-body')?.textContent || '').trim() + '\n\n';
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
+  a.download = 'pitchly_' + mode + '_' + Date.now() + '.txt';
+  a.click();
+  showToast('✓ Fichier exporté');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══ HISTORY ══
+function renderHistory() {
+  const list = document.getElementById('hist-list');
+  if (!history.length) { list.innerHTML = '<div class="hist-empty">Aucun script généré pour l\'instant.</div>'; return; }
+  list.innerHTML = history.map(h => `
+    <div class="hist-card" onclick="loadFromHistory(${h.id})">
+      <div class="hist-card-top">
+        <div class="hist-card-mode">${h.mode === 'vente' ? '📞 cold call' : '🎧 support'}</div>
+        <div class="hist-card-date">${h.date}</div>
+      </div>
+      <div class="hist-card-title">${h.product || 'Script sans titre'}</div>
+      <div class="hist-card-prev">${h.sections?.[0]?.content?.slice(0, 140) || ''}…</div>
+    </div>
+  `).join('');
+}
+
+function loadFromHistory(id) {
+  const h = history.find(x => x.id === id);
+  if (!h) return;
+  mode = h.mode;
+  document.getElementById('mode-vente').classList.toggle('on', mode === 'vente');
+  document.getElementById('mode-support').classList.toggle('on', mode === 'support');
+  document.getElementById('block-obj').style.display = mode === 'vente' ? 'block' : 'none';
+  scriptSections = h.sections;
+  switchView('gen', document.querySelector('.top-tab'));
+  document.querySelector('.top-tab').classList.add('on');
+  document.querySelector('.cpanel').style.display = 'flex';
+  document.getElementById('view-gen').style.display = 'flex';
+  document.querySelector('.tpanel').style.display = 'flex';
+  document.getElementById('view-hist').style.display = 'none';
+  setTimeout(() => {
+    renderScript(h.sections, { product: h.product, dur: h.dur });
+    loadTeleprompter(h.sections);
+  }, 50);
+}
+
+function clearHistory() {
+  if (confirm('Effacer tout l\'historique ?')) {
+    history = [];
+    localStorage.removeItem('pitchly_hist');
+    renderHistory();
+  }
+}
+</script>
+</body>
+</html>
