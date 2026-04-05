@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitchly — Suite IA Commerce</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a25;
+  --border:#2a2a3a;--muted:#666680;
+  --text:#f0f0f8;--text2:#9090b0;
+  --orange:#f97316;--orange2:#fb923c;
+  --green:#22c55e;--blue:#3b82f6;--pink:#ec4899;
+  --sans:'Bricolage Grotesque',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
+
+nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 24px;background:var(--bg2);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:10;
+}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:36px;height:36px;border-radius:9px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#fff;box-shadow:0 0 20px rgba(249,115,22,.4)}
+.logo-name{font-weight:800;font-size:17px;letter-spacing:-.4px}
+
+/* CONNEXION GOOGLE */
+.connect-bar{
+  background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(59,130,246,.08));
+  border-bottom:1px solid rgba(249,115,22,.2);
+  padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.connect-info{font-size:13px;color:var(--text2)}
+.connect-info b{color:var(--text)}
+.connect-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn-connect{
+  padding:9px 18px;border-radius:9px;border:none;
+  background:var(--orange);color:#fff;font-family:var(--sans);
+  font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 14px rgba(249,115,22,.3);
+}
+.btn-connect:hover{background:#ea6c0a;transform:translateY(-1px)}
+.connected-badge{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--green);background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);padding:6px 12px;border-radius:20px}
+.dot-green{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.biz-inp{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:var(--sans);font-size:13px;outline:none;width:220px}
+.biz-inp:focus{border-color:var(--orange)}
+
+/* TABS */
+.tabs{display:flex;padding:0 24px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.tab{padding:12px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;display:flex;align-items:center;gap:7px}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--orange);border-bottom-color:var(--orange)}
+
+/* HERO */
+.hero{text-align:center;padding:40px 24px 28px;background:linear-gradient(180deg,rgba(249,115,22,.06) 0%,transparent 100%)}
+.hero h1{font-size:clamp(26px,4vw,44px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:10px}
+.hero h1 span{color:var(--orange)}
+.hero p{font-size:14px;color:var(--text2);max-width:460px;margin:0 auto;line-height:1.7}
+
+/* MAIN */
+.main{max-width:860px;margin:0 auto;padding:20px}
+
+/* PANEL */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.panel-body{padding:18px}
+
+/* FORM */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;font-family:var(--mono)}
+.field input,.field select,.field textarea{width:100%;padding:10px 13px;font-size:13px;background:var(--bg3);border:1.5px solid var(--border);border-radius:9px;color:var(--text);outline:none;font-family:var(--sans);transition:border-color .15s;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange)}
+.field textarea{min-height:80px}
+
+/* STARS */
+.stars-row{display:flex;gap:5px;flex-wrap:wrap}
+.star-btn{padding:7px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg3);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--sans)}
+.star-btn:hover{border-color:var(--orange);color:var(--orange2)}
+.star-btn.on{background:var(--orange);border-color:var(--orange);color:#fff}
+
+.tone-row{display:flex;gap:6px;flex-wrap:wrap}
+.tone-btn{padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg3);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--sans)}
+.tone-btn.on{background:rgba(249,115,22,.15);border-color:var(--orange);color:var(--orange2)}
+
+/* BTN GENERATE */
+.btn-generate{width:100%;padding:12px;border-radius:10px;border:none;background:var(--orange);color:#fff;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(249,115,22,.3)}
+.btn-generate:hover{background:#ea6c0a;transform:translateY(-1px)}
+
+/* RÉSULTATS */
+.results{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.result-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;overflow:hidden;animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.rc-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.rc-tone{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;font-family:var(--mono)}
+.tone-pro{background:rgba(59,130,246,.15);color:var(--blue)}
+.tone-warm{background:rgba(249,115,22,.15);color:var(--orange2)}
+.tone-short{background:rgba(34,197,94,.15);color:var(--green)}
+.rc-body{padding:14px 16px;font-size:13px;line-height:1.8;color:var(--text2)}
+.rc-actions{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
+
+/* BOUTONS ACTIONS */
+.btn-copy{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-copy:hover{border-color:var(--orange);color:var(--orange2)}
+.btn-copy.copied{background:var(--green);border-color:var(--green);color:#fff}
+.btn-publish{
+  flex:2;padding:8px;border-radius:8px;border:none;
+  background:linear-gradient(135deg,var(--orange),#ea6c0a);
+  color:#fff;font-family:var(--sans);font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 3px 10px rgba(249,115,22,.3);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn-publish:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(249,115,22,.4)}
+.btn-publish:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-publish.publishing{opacity:.7;cursor:wait}
+.btn-publish.published{background:linear-gradient(135deg,var(--green),#16a34a);box-shadow:0 3px 10px rgba(34,197,94,.3)}
+
+/* SECTION VIEW */
+.section-view{display:none}
+.section-view.active{display:block}
+
+/* RELANCE */
+.relance-grid{display:grid;grid-template-columns:320px 1fr;gap:16px}
+.relance-config{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;height:fit-content}
+.relance-results{display:flex;flex-direction:column;gap:12px}
+.msg-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;overflow:hidden;animation:fadeUp .3s ease both}
+.mc-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mc-canal{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700}
+.mc-ico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.ico-sms{background:rgba(59,130,246,.15)}
+.ico-email{background:rgba(249,115,22,.15)}
+.ico-wa{background:rgba(34,197,94,.15)}
+.mc-body{padding:14px 16px;font-size:13px;line-height:1.8;color:var(--text2);white-space:pre-wrap}
+.mc-actions{padding:10px 14px;border-top:1px solid var(--border)}
+.phone-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.phone-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;font-family:var(--mono)}
+.phone-mock{background:#1c1c1e;border-radius:16px;padding:16px;max-width:260px;margin:0 auto}
+.phone-time{font-size:10px;color:rgba(255,255,255,.35);text-align:center;margin-bottom:10px;font-family:var(--mono)}
+.phone-from{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px;font-weight:600}
+.phone-bubble{background:#2c2c2e;border-radius:14px 14px 14px 4px;padding:10px 13px;font-size:12px;color:rgba(255,255,255,.85);line-height:1.6;white-space:pre-wrap}
+
+/* TOAST */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--bg2);color:var(--text);padding:10px 18px;border-radius:9px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5);border:1px solid var(--border);font-family:var(--mono)}
+.toast.show{opacity:1}
+.toast.ok{background:#166534;border-color:#15803d;color:#fff}
+.toast.err{background:#991b1b;border-color:#b91c1c;color:#fff}
+.toast.info{background:#1e40af;border-color:#1d4ed8;color:#fff}
+
+@media(max-width:640px){
+  .relance-grid{grid-template-columns:1fr}
+  .connect-bar{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-mark">P</div>
+    <div>
+      <div class="logo-name">Pitchly</div>
+    </div>
+  </div>
+</nav>
+
+<!-- BARRE CONNEXION GOOGLE -->
+<div class="connect-bar">
+  <div class="connect-info">
+    <b>Connectez votre commerce Google</b> pour publier les réponses directement sur votre fiche
+  </div>
+  <div class="connect-btns">
+    <input class="biz-inp" id="biz-connect" placeholder="Nom de votre commerce..." oninput="syncBizName()">
+    <div id="connect-status">
+      <button class="btn-connect" onclick="connectGoogle()">🔗 Connecter Google My Business</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="showTab('avis',this)">⭐ Réponses avis Google</div>
+  <div class="tab" onclick="showTab('relance',this)">💬 Relance clients</div>
+  <div class="tab" onclick="showTab('instagram',this)">📸 Posts Instagram</div>
+</div>
+
+<!-- ════════ ONGLET AVIS ════════ -->
+<div class="section-view active" id="tab-avis">
+  <div class="hero">
+    <h1>Répondez à vos avis<br><span>en 1 clic</span></h1>
+    <p>Collez un avis Google, Pitchly génère 3 réponses professionnelles et les publie directement sur votre fiche.</p>
+  </div>
+
+  <div class="main">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">⭐ Générateur de réponses</div>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Nom de votre commerce</label>
+          <input type="text" id="biz-name" placeholder="ex : Restaurant Le Provençal..." oninput="syncBizConnect()">
+        </div>
+        <div class="field">
+          <label>Avis Google du client (copiez-collez)</label>
+          <textarea id="avis-text" placeholder="Collez ici l'avis de votre client Google..."></textarea>
+        </div>
+        <div class="field">
+          <label>Note reçue</label>
+          <div class="stars-row">
+            <button class="star-btn" onclick="setStar(1,this)">⭐ 1</button>
+            <button class="star-btn" onclick="setStar(2,this)">⭐⭐ 2</button>
+            <button class="star-btn" onclick="setStar(3,this)">⭐⭐⭐ 3</button>
+            <button class="star-btn on" onclick="setStar(4,this)">⭐⭐⭐⭐ 4</button>
+            <button class="star-btn" onclick="setStar(5,this)">⭐⭐⭐⭐⭐ 5</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Langue de réponse</label>
+          <div class="tone-row">
+            <button class="tone-btn on" onclick="setLang('fr',this)">🇫🇷 Français</button>
+            <button class="tone-btn" onclick="setLang('en',this)">🇬🇧 English</button>
+            <button class="tone-btn" onclick="setLang('es',this)">🇪🇸 Español</button>
+          </div>
+        </div>
+        <button class="btn-generate" onclick="generateAvis()">✦ Générer les réponses</button>
+      </div>
+    </div>
+    <div class="results" id="avis-results"></div>
+  </div>
+</div>
+
+<!-- ════════ ONGLET RELANCE ════════ -->
+<div class="section-view" id="tab-relance">
+  <div class="hero">
+    <h1>Relancez vos clients<br><span>inactifs</span></h1>
+    <p>Messages personnalisés par SMS, WhatsApp et Email. Pitchly les envoie automatiquement toutes les nuits.</p>
+  </div>
+  <div class="main">
+    <div class="relance-grid">
+      <div class="relance-config">
+        <div class="field">
+          <label>Nom du commerce</label>
+          <input type="text" id="r-biz" placeholder="ex : Chez Marco">
+        </div>
+        <div class="field">
+          <label>Prénom du client</label>
+          <input type="text" id="r-client" placeholder="ex : Sophie, Karim...">
+        </div>
+        <div class="field">
+          <label>Secteur</label>
+          <select id="r-sector">
+            <option value="restaurant">🍽️ Restaurant</option>
+            <option value="coiffure">💇 Coiffure</option>
+            <option value="garage">🔧 Garage</option>
+            <option value="hotel">🏨 Hôtel</option>
+            <option value="beaute">💆 Beauté / Spa</option>
+            <option value="sport">🏋️ Sport</option>
+            <option value="default">🏪 Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Absent depuis</label>
+          <div class="tone-row">
+            <button class="tone-btn" onclick="setDelay('2 semaines',this)">2 sem.</button>
+            <button class="tone-btn on" onclick="setDelay('1 mois',this)">1 mois</button>
+            <button class="tone-btn" onclick="setDelay('2 mois',this)">2 mois</button>
+          </div>
+        </div>
+        <button class="btn-generate" onclick="generateRelance()">✦ Générer les messages</button>
+      </div>
+      <div class="relance-results" id="relance-results">
+        <div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;background:var(--bg2);border:1px solid var(--border);border-radius:14px">
+          Configurez et cliquez sur Générer
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ONGLET INSTAGRAM ════════ -->
+<div class="section-view" id="tab-instagram">
+  <div class="hero">
+    <h1>Posts Instagram<br><span>en 10 secondes</span></h1>
+    <p>Décrivez votre actualité, Pitchly génère le post complet avec hashtags optimisés.</p>
+  </div>
+  <div class="main">
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">📸 Générateur de posts</div></div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Nom du commerce</label>
+          <input type="text" id="ig-biz" placeholder="ex : Restaurant Le Soleil">
+        </div>
+        <div class="field">
+          <label>Type de post</label>
+          <div class="tone-row">
+            <button class="tone-btn on" onclick="setIgType('plat',this)">🍽️ Nouveau plat</button>
+            <button class="tone-btn" onclick="setIgType('promo',this)">🎁 Promotion</button>
+            <button class="tone-btn" onclick="setIgType('event',this)">🎉 Événement</button>
+            <button class="tone-btn" onclick="setIgType('ferme',this)">🔒 Fermeture</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Décrivez en quelques mots</label>
+          <textarea id="ig-desc" placeholder="ex : Nouveau burger truffe et foie gras pour l'hiver..."></textarea>
+        </div>
+        <button class="btn-generate" onclick="generateIG()">✦ Générer le post</button>
+      </div>
+    </div>
+    <div class="results" id="ig-results"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+const API = 'https://pitchly-backend-production.up.railway.app';
+let stars = 4, lang = 'fr', delay = '1 mois', igType = 'plat';
+let restaurantId = null, connected = false;
+
+// ── SYNC NOM COMMERCE ──
+function syncBizName() {
+  document.getElementById('r-biz').value = document.getElementById('biz-connect').value;
+  document.getElementById('ig-biz').value = document.getElementById('biz-connect').value;
+}
+function syncBizConnect() {
+  document.getElementById('biz-connect').value = document.getElementById('biz-name').value;
+  syncBizName();
+}
+
+// ── CONNEXION GOOGLE ──
+function connectGoogle() {
+  const biz = document.getElementById('biz-connect').value.trim();
+  if (!biz) { toast('Entrez le nom du commerce d\'abord', 'err'); return; }
+  const url = `${API}/auth/google?restaurant_name=${encodeURIComponent(biz)}`;
+  window.open(url, '_blank', 'width=500,height=600');
+  // Simuler la connexion après 5 secondes (en attendant le callback)
+  toast('Fenêtre de connexion ouverte...', 'info');
+  setTimeout(checkConnection, 5000);
+}
+
+async function checkConnection() {
+  try {
+    const biz = document.getElementById('biz-connect').value.trim();
+    const res = await fetch(`${API}/api/restaurants`);
+    const restos = await res.json();
+    const found = restos.find(r => r.name.toLowerCase().includes(biz.toLowerCase()) || biz.toLowerCase().includes(r.name.toLowerCase()));
+    if (found) {
+      restaurantId = found.id;
+      connected = true;
+      document.getElementById('connect-status').innerHTML = `<div class="connected-badge"><div class="dot-green"></div>Connecté — ${found.name}</div>`;
+      toast('✅ Commerce connecté !', 'ok');
+    }
+  } catch(e) {}
+}
+
+// ── TABS ──
+function showTab(name, btn) {
+  document.querySelectorAll('.section-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('on');
+}
+
+function setStar(n, btn) { stars = n; document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('on')); btn.classList.add('on'); }
+function setLang(l, btn) { lang = l; document.querySelectorAll('#tab-avis .tone-btn').forEach(b => b.classList.remove('on')); btn.classList.add('on'); }
+function setDelay(d, btn) { delay = d; document.querySelectorAll('#tab-relance .tone-btn').forEach(b => b.classList.remove('on')); btn.classList.add('on'); }
+function setIgType(t, btn) { igType = t; document.querySelectorAll('#tab-instagram .tone-btn').forEach(b => b.classList.remove('on')); btn.classList.add('on'); }
+
+// ══════════════════════════════════════
+// GÉNÉRATEUR AVIS
+// ══════════════════════════════════════
+const AVIS = {
+  fr: {
+    5: [(b,p)=>`Merci infiniment ${p} pour ce retour magnifique ! Toute l'équipe de ${b} est touchée par vos mots. C'est exactement pour des moments comme celui-là que nous donnons le meilleur chaque jour. À très bientôt ! 🙏`,(b,p)=>`${p}, votre retour nous va droit au cœur ! Chez ${b}, la satisfaction de nos clients est notre plus grande fierté. Nous vous attendons avec plaisir pour une prochaine visite. Merci !`,(b,p)=>`Quel beau message, merci ${p} ! L'équipe de ${b} est ravie de vous avoir accueilli(e). Votre fidélité nous touche beaucoup. À bientôt ! ⭐`],
+    4: [(b,p)=>`Merci beaucoup ${p} pour votre retour ! Chez ${b}, nous sommes ravis que votre expérience ait été positive. Nous travaillons chaque jour pour vous offrir encore mieux. À très bientôt !`,(b,p)=>`${p}, merci pour ce retour encourageant ! L'équipe de ${b} prend note de vos remarques pour progresser. Nous serons heureux de vous retrouver prochainement. 😊`,(b,p)=>`Merci ${p} ! Votre satisfaction est notre priorité chez ${b}. On espère vous revoir bientôt pour une expérience encore meilleure !`],
+    3: [(b,p)=>`Merci ${p} pour votre retour honnête. Chez ${b}, nous prenons chaque avis très au sérieux et allons tout mettre en œuvre pour améliorer votre expérience. N'hésitez pas à nous recontacter directement.`,(b,p)=>`${p}, nous vous remercions pour ce retour constructif. Votre satisfaction est importante pour ${b} et nous travaillons à nous améliorer chaque jour. Nous espérons vous revoir.`,(b,p)=>`Merci pour votre avis ${p}. Chez ${b} nous sommes attentifs à chaque retour. Vos remarques nous aident à progresser. À bientôt !`],
+    2: [(b,p)=>`${p}, nous sommes sincèrement désolés que votre expérience chez ${b} n'ait pas été à la hauteur. Votre retour est précieux et nous allons tout mettre en œuvre pour rectifier cela. N'hésitez pas à nous contacter directement.`,(b,p)=>`Merci ${p} pour votre retour. Chez ${b}, ce type d'expérience est inacceptable et nous le prenons très au sérieux. Nous aimerions comprendre ce qui s'est passé — pouvez-vous nous contacter ?`,(b,p)=>`${p}, nous sommes désolés. Chez ${b} nous voulons que chaque visite soit parfaite. Votre retour va nous aider à nous améliorer. Contactez-nous directement.`],
+    1: [(b,p)=>`${p}, nous sommes vraiment désolés pour cette expérience. Chez ${b}, cela ne correspond pas à nos standards. Nous aimerions comprendre ce qui s'est passé et faire mieux. Pouvez-vous nous appeler directement ?`,(b,p)=>`Merci ${p} pour votre retour, même s'il est difficile à lire. Chez ${b} nous prenons cela très au sérieux. Nous vous invitons à nous contacter pour trouver une solution ensemble.`,(b,p)=>`${p}, nous vous présentons nos sincères excuses. Ce type d'expérience est inacceptable pour ${b}. Contactez-nous directement — nous tenons absolument à arranger cela pour vous.`],
+  },
+  en: {
+    5: [(b,p)=>`Thank you so much ${p} for this wonderful review! The whole team at ${b} is truly touched by your words. See you very soon! 🙏`,(b,p)=>`${p}, your kind words mean everything to us at ${b}! Customer satisfaction is our greatest pride. We look forward to welcoming you again soon!`,(b,p)=>`What a lovely message, thank you ${p}! The team at ${b} is delighted to have had you. See you next time! ⭐`],
+    4: [(b,p)=>`Thank you ${p} for your kind review! At ${b} we're glad your experience was positive. We work every day to make it even better. See you soon!`,(b,p)=>`${p}, thanks for this encouraging feedback! The team at ${b} notes your comments to keep improving. We hope to see you again soon. 😊`,(b,p)=>`Thank you ${p}! Your satisfaction is our priority at ${b}. We hope to see you again for an even better experience!`],
+    3: [(b,p)=>`Thank you ${p} for your honest feedback. At ${b} we take every review seriously and will work to improve your experience. Please don't hesitate to contact us directly.`,(b,p)=>`${p}, we appreciate this constructive feedback. Your satisfaction matters to ${b} and we work to improve every day. We hope to see you again.`,(b,p)=>`Thank you for your review ${p}. At ${b} we listen to all feedback. Your comments help us grow. See you soon!`],
+    2: [(b,p)=>`${p}, we sincerely apologize that your experience at ${b} didn't meet expectations. Your feedback is valuable and we'll work to fix this. Please contact us directly.`,(b,p)=>`Thank you ${p} for your feedback. At ${b}, this kind of experience is unacceptable and we take it very seriously. We'd love to understand what happened — could you contact us?`,(b,p)=>`${p}, we're sorry. At ${b} we want every visit to be perfect. Your feedback will help us improve. Please contact us directly.`],
+    1: [(b,p)=>`${p}, we're truly sorry about your experience. At ${b} this doesn't meet our standards at all. We'd like to understand what happened and do better. Could you call us directly?`,(b,p)=>`Thank you ${p} for your feedback, even though it's difficult to read. At ${b} we take this very seriously. Please contact us so we can find a solution together.`,(b,p)=>`${p}, we sincerely apologize. This kind of experience is unacceptable at ${b}. Please contact us directly — we absolutely want to make this right for you.`],
+  },
+  es: {
+    5: [(b,p)=>`¡Muchas gracias ${p} por esta reseña tan maravillosa! Todo el equipo de ${b} está emocionado con sus palabras. ¡Hasta muy pronto! 🙏`,(b,p)=>`${p}, ¡sus palabras nos llegan al corazón! En ${b} la satisfacción de nuestros clientes es nuestro mayor orgullo. ¡Esperamos verle pronto!`,(b,p)=>`¡Qué mensaje tan bonito, gracias ${p}! El equipo de ${b} está encantado de haberle tenido. ¡Hasta la próxima! ⭐`],
+    4: [(b,p)=>`¡Muchas gracias ${p} por su reseña! En ${b} nos alegra que su experiencia haya sido positiva. Trabajamos cada día para mejorar. ¡Hasta pronto!`,(b,p)=>`${p}, ¡gracias por estos comentarios alentadores! El equipo de ${b} toma nota para seguir mejorando. Esperamos verle pronto. 😊`,(b,p)=>`¡Gracias ${p}! Su satisfacción es nuestra prioridad en ${b}. ¡Esperamos verle de nuevo!`],
+    3: [(b,p)=>`Gracias ${p} por su opinión honesta. En ${b} tomamos cada reseña muy en serio y haremos todo lo posible por mejorar su experiencia.`,(b,p)=>`${p}, agradecemos sus comentarios constructivos. Su satisfacción importa en ${b} y trabajamos para mejorar cada día.`,(b,p)=>`Gracias por su reseña ${p}. En ${b} escuchamos todos los comentarios. ¡Hasta pronto!`],
+    2: [(b,p)=>`${p}, lamentamos sinceramente que su experiencia en ${b} no haya estado a la altura. Su opinión es valiosa. No dude en contactarnos.`,(b,p)=>`Gracias ${p} por su opinión. En ${b} este tipo de experiencia es inaceptable. Nos gustaría entender qué pasó — ¿puede contactarnos?`,(b,p)=>`${p}, lo sentimos. En ${b} queremos que cada visita sea perfecta. Contáctenos para poder remediar la situación.`],
+    1: [(b,p)=>`${p}, lamentamos mucho su experiencia. En ${b} esto no corresponde a nuestros estándares. ¿Podría llamarnos directamente?`,(b,p)=>`Gracias ${p} por su opinión, aunque sea difícil de leer. En ${b} lo tomamos muy en serio. Por favor contáctenos.`,(b,p)=>`${p}, le pedimos sinceras disculpas. Este tipo de experiencia es inaceptable en ${b}. Contáctenos directamente.`],
+  }
+};
+
+const TONS = ['Professionnel','Chaleureux','Court & direct'];
+const TON_CLASSES = ['tone-pro','tone-warm','tone-short'];
+
+function extractPrenom(text) {
+  if (!text) return null;
+  const m = text.match(/^([A-ZÀ-Ÿ][a-zà-ÿ\-]+)/);
+  return m ? m[1] : null;
+}
+
+function generateAvis() {
+  const biz = document.getElementById('biz-name').value.trim() || 'votre commerce';
+  const avisText = document.getElementById('avis-text').value.trim();
+  const prenom = extractPrenom(avisText) || 'client';
+  const templates = (AVIS[lang] || AVIS.fr)[stars] || AVIS.fr[5];
+  const container = document.getElementById('avis-results');
+  container.innerHTML = '';
+
+  templates.forEach((tpl, i) => {
+    const text = tpl(biz, prenom);
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.style.animationDelay = (i * .08) + 's';
+    card.innerHTML = `
+      <div class="rc-head">
+        <div style="font-size:12px;font-weight:600;color:var(--text2)">${'⭐'.repeat(stars)} ${stars} étoile${stars>1?'s':''} · ${prenom}</div>
+        <span class="rc-tone ${TON_CLASSES[i]}">${TONS[i]}</span>
+      </div>
+      <div class="rc-body">${text}</div>
+      <div class="rc-actions">
+        <button class="btn-copy" onclick="copyText(this,'${encEnc(text)}')">⎘ Copier</button>
+        <button class="btn-publish" id="pub-${i}" onclick="publishReply(this,'${encEnc(text)}')">
+          🚀 Publier sur Google
+        </button>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+async function publishReply(btn, encoded) {
+  const text = decEnc(encoded);
+  if (!connected || !restaurantId) {
+    toast('Connectez d\'abord votre Google My Business en haut ↑', 'err');
+    return;
+  }
+  btn.classList.add('publishing');
+  btn.textContent = '⏳ Publication...';
+  btn.disabled = true;
+
+  try {
+    // Appel backend pour publier
+    const res = await fetch(`${API}/api/reviews/publish`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ restaurant_id: restaurantId, reply_text: text })
+    });
+
+    if (res.ok) {
+      btn.classList.remove('publishing');
+      btn.classList.add('published');
+      btn.innerHTML = '✅ Publié sur Google !';
+      toast('Réponse publiée sur Google !', 'ok');
+    } else {
+      throw new Error('Erreur serveur');
+    }
+  } catch(e) {
+    btn.classList.remove('publishing');
+    btn.disabled = false;
+    btn.innerHTML = '🚀 Publier sur Google';
+    toast('Connectez votre compte Google pour publier', 'err');
+  }
+}
+
+// ══════════════════════════════════════
+// GÉNÉRATEUR RELANCE
+// ══════════════════════════════════════
+const RELANCE = {
+  restaurant:{
+    sms:(p,b,d)=>`Bonjour ${p} ! Cela fait ${d} sans vous voir chez ${b} 😊 Notre chef a de nouveaux plats pour vous. On vous attend !`,
+    wa:(p,b,d)=>`Bonjour ${p} 👋\n\nCela fait ${d} que vous n'êtes pas passé(e) chez ${b}, et on pense à vous !\n\nNotre carte a changé avec de nouvelles recettes de saison 🍽️\n\nÀ très bientôt !\n_L'équipe ${b}_`,
+    email:(p,b,d)=>`Objet : ${p}, on pensait à vous chez ${b}\n\nBonjour ${p},\n\nCela fait ${d} que vous n'êtes pas venu(e) chez ${b}.\n\nNotre carte a évolué avec des produits de saison. Nos nouveaux plats n'attendent que vous.\n\nÀ très bientôt,\nL'équipe ${b}`,
+  },
+  coiffure:{
+    sms:(p,b,d)=>`${p}, cela fait ${d} ✂️ Il est temps de passer chez ${b} ! On a de la dispo pour vous.`,
+    wa:(p,b,d)=>`Bonjour ${p} 👋\n\nCela fait ${d} depuis votre dernière visite chez ${b} !\n\nNos stylistes ont hâte de vous retrouver ✨\n\nÀ bientôt !\n_L'équipe ${b}_`,
+    email:(p,b,d)=>`Objet : ${p}, votre prochain rendez-vous chez ${b}\n\nBonjour ${p},\n\nCela fait ${d} depuis votre dernière visite chez ${b}.\n\nNos stylistes ont hâte de vous retrouver.\n\nÀ bientôt,\nL'équipe ${b}`,
+  },
+  garage:{
+    sms:(p,b,d)=>`Bonjour ${p}, ${d} sans entretien chez ${b} 🔧 La saison change — pensez à votre véhicule !`,
+    wa:(p,b,d)=>`Bonjour ${p} 👋\n\nCela fait ${d} que votre véhicule n'est pas passé chez ${b}.\n\nUn entretien régulier évite les mauvaises surprises 🚗\n\nL'équipe ${b}`,
+    email:(p,b,d)=>`Objet : ${p}, votre véhicule mérite un contrôle\n\nBonjour ${p},\n\nCela fait ${d} que votre véhicule n'est pas passé chez ${b}.\n\nCordialement,\nL'équipe ${b}`,
+  },
+  hotel:{
+    sms:(p,b,d)=>`${p}, ${d} depuis votre séjour chez ${b} 🏨 On aimerait vous revoir !`,
+    wa:(p,b,d)=>`Bonjour ${p} 👋\n\nCela fait ${d} depuis votre séjour chez ${b} 🌟\n\nUne offre exclusive vous attend pour votre prochain séjour.\n\n_L'équipe ${b}_`,
+    email:(p,b,d)=>`Objet : ${p}, une offre exclusive vous attend\n\nBonjour ${p},\n\nCela fait ${d} depuis votre séjour chez ${b}.\n\nChaleureusement,\nL'équipe ${b}`,
+  },
+  beaute:{
+    sms:(p,b,d)=>`${p}, ${d} sans soin chez ${b} 💆 Votre bien-être mérite mieux !`,
+    wa:(p,b,d)=>`Bonjour ${p} 👋\n\nCela fait ${d} depuis votre dernier soin chez ${b} ✨\n\nNouveau rituel de saison vous attend !\n\n_L'équipe ${b}_`,
+    email:(p,b,d)=>`Objet : ${p}, votre rituel bien-être vous attend\n\nBonjour ${p},\n\nCela fait ${d} depuis votre dernier soin chez ${b}.\n\nÀ bientôt,\nL'équipe ${b}`,
+  },
+  sport:{
+    sms:(p,b,d)=>`${p}, ${d} sans séance chez ${b} 💪 Votre corps vous attend !`,
+    wa:(p,b,d)=>`Bonjour ${p} 👋\n\nCela fait ${d} depuis votre dernière séance chez ${b} 🏋️\n\nNos coachs ont un programme parfait pour votre retour !\n\n_L'équipe ${b}_`,
+    email:(p,b,d)=>`Objet : ${p}, votre programme de retour\n\nBonjour ${p},\n\nCela fait ${d} depuis votre dernière séance chez ${b}.\n\nÀ bientôt,\nL'équipe ${b}`,
+  },
+  default:{
+    sms:(p,b,d)=>`Bonjour ${p} ! ${d} sans vous voir chez ${b} 😊 On vous attend !`,
+    wa:(p,b,d)=>`Bonjour ${p} 👋\n\nCela fait ${d} que vous n'êtes pas passé(e) chez ${b} ✨\n\nÀ très bientôt !\n_L'équipe ${b}_`,
+    email:(p,b,d)=>`Objet : ${p}, l'équipe ${b} pense à vous\n\nBonjour ${p},\n\nCela fait ${d} que vous n'êtes pas venu(e) chez ${b}.\n\nÀ très bientôt,\nL'équipe ${b}`,
+  }
+};
+
+function generateRelance() {
+  const biz = document.getElementById('r-biz').value.trim() || 'votre commerce';
+  const client = document.getElementById('r-client').value.trim() || 'cher client';
+  const sector = document.getElementById('r-sector').value;
+  const m = RELANCE[sector] || RELANCE.default;
+  const prenom = client.charAt(0).toUpperCase() + client.slice(1);
+  const container = document.getElementById('relance-results');
+  container.innerHTML = '';
+
+  const msgs = [
+    { canal:'SMS', ico:'📱', cls:'ico-sms', text: m.sms(prenom,biz,delay) },
+    { canal:'WhatsApp', ico:'💬', cls:'ico-wa', text: m.wa(prenom,biz,delay) },
+    { canal:'Email', ico:'📧', cls:'ico-email', text: m.email(prenom,biz,delay) },
+  ];
+
+  msgs.forEach((msg,i) => {
+    const card = document.createElement('div');
+    card.className = 'msg-card';
+    card.style.animationDelay = (i*.1)+'s';
+    card.innerHTML = `
+      <div class="mc-head">
+        <div class="mc-canal"><div class="mc-ico ${msg.cls}">${msg.ico}</div>${msg.canal}</div>
+      </div>
+      <div class="mc-body">${msg.text}</div>
+      <div class="mc-actions">
+        <button class="btn-copy" onclick="copyText(this,'${encEnc(msg.text)}')">⎘ Copier</button>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  const preview = document.createElement('div');
+  preview.className = 'phone-wrap';
+  preview.innerHTML = `
+    <div class="phone-title">📱 Aperçu SMS</div>
+    <div class="phone-mock">
+      <div class="phone-time">Maintenant</div>
+      <div class="phone-from">${biz}</div>
+      <div class="phone-bubble">${msgs[0].text}</div>
+    </div>`;
+  container.appendChild(preview);
+}
+
+// ══════════════════════════════════════
+// GÉNÉRATEUR INSTAGRAM
+// ══════════════════════════════════════
+const IG = {
+  plat:(b,d)=>`✨ Nouveau chez ${b} !\n\n${d}\n\nUn plat pensé avec passion, des produits soigneusement choisis.\nVenez le découvrir — votre table vous attend 🍽️\n\n📍 Réservez directement.\n\n#${b.replace(/\s/g,'')} #NouveauPlat #GastronomieLocale #CommerceLocal #FaitMaison`,
+  promo:(b,d)=>`🎁 Offre spéciale chez ${b} !\n\n${d}\n\nDurée limitée ⏳ Réservez vite !\n\n📍 ${b}\n\n#${b.replace(/\s/g,'')} #Promotion #BonPlan #OffreSpeciale #CommerceLocal`,
+  event:(b,d)=>`🎉 Événement chez ${b} !\n\n${d}\n\nRejoignez-nous — places limitées 🔥\n\n📍 Contactez-nous pour réserver.\n\n#${b.replace(/\s/g,'')} #Evenement #SoireeSpeciale #CommerceLocal`,
+  ferme:(b,d)=>`📢 Information — ${b}\n\n${d}\n\nMerci de votre compréhension. À très bientôt ! 🙏\n\n#${b.replace(/\s/g,'')} #Information #CommerceLocal`,
+};
+
+function generateIG() {
+  const biz = document.getElementById('ig-biz').value.trim() || 'votre commerce';
+  const desc = document.getElementById('ig-desc').value.trim() || '...';
+  const text = (IG[igType] || IG.plat)(biz, desc);
+  const container = document.getElementById('ig-results');
+  container.innerHTML = '';
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.innerHTML = `
+    <div class="rc-head">
+      <div style="font-size:12px;font-weight:600;color:var(--text2)">📸 Post Instagram</div>
+      <span class="rc-tone tone-warm">Prêt à publier</span>
+    </div>
+    <div class="rc-body" style="white-space:pre-wrap">${text}</div>
+    <div class="rc-actions">
+      <button class="btn-copy" onclick="copyText(this,'${encEnc(text)}')">⎘ Copier le post</button>
+    </div>`;
+  container.appendChild(card);
+}
+
+// ── UTILS ──
+function encEnc(t){return encodeURIComponent(t)}
+function decEnc(t){return decodeURIComponent(t)}
+
+function copyText(btn, encoded) {
+  const text = decEnc(encoded);
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copié !';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='⎘ Copier';btn.classList.remove('copied');},2000);
+    toast('Copié !', 'ok');
+  });
+}
+
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast ${type} show`;
+  setTimeout(()=>el.classList.remove('show'), 2500);
+}
+
+// Vérifier si déjà connecté au chargement
+window.onload = () => { checkConnection(); };
+</script>
+</body>
+</html>
